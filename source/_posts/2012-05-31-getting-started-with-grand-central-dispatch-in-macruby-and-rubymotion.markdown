@@ -67,7 +67,7 @@ Dispatch Objects allow to manage the blocks execution by canceling, suspend and 
 #### Suspending and resuming execution:
 ```ruby suspending and resuming execution
 	queue = Dispatch::Queue.new('com.company.app.task')
-	queue.sync { sleep 1; puts :hallo }
+	queue.async { sleep 1; puts :hallo }
 	queue.suspend!
 	queue.suspended?
 	queue.resume!
