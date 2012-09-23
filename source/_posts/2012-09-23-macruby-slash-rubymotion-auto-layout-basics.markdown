@@ -99,9 +99,9 @@ This code might work on all devices the same [iphone, retina iphone and iphone 5
 the example code on [github](https://github.com/seanlilmateus/MAStockPriceFetcher) include some localization tweaks, it shows what are the benifits of autolayout for localization and other stuffs.
 
  <h2 id="source">Sources:</h2> 
-- [Cocoa Autolayout WWDC 2011 video](https://developer.apple.com/videos/wwdc/2011/includes/cocoa-autolayout.html#cocoa-autolayout)
-- [Cocoa Auto Layout Guide](http://developer.apple.com/library/mac/#documentation/UserExperience/Conceptual/AutolayoutPG/Articles/Introduction.html#//apple_ref/doc/uid/TP40010853-CH1-DontLinkElementID_2)
-- [Beginning Auto Layout in iOS 6: Part 1 / 2](http://www.raywenderlich.com/20897/beginning-auto-layout-part-1-of-2)
-- [Beginning Auto Layout in iOS 6: Part 2 / 2](http://www.raywenderlich.com/20897/beginning-auto-layout-part-2-of-2)
-- [WWDC 2012: Best Practices for Mastering Auto Layout](https://developer.apple.com/videos/wwdc/2012/?id=228)
+- [Cocoa Autolayout WWDC 2011 video](https://developer.apple.com/videos/wwdc/2011/includes/cocoa-autolayout.html#cocoa-autolayout)<br/>
+- [Cocoa Auto Layout Guide](http://developer.apple.com/library/mac/#documentation/UserExperience/Conceptual/AutolayoutPG/Articles/Introduction.html#//apple_ref/doc/uid/TP40010853-CH1-DontLinkElementID_2)<br/>
+- [Beginning Auto Layout in iOS 6: Part 1 / 2](http://www.raywenderlich.com/20897/beginning-auto-layout-part-1-of-2)<br/>
+- [Beginning Auto Layout in iOS 6: Part 2 / 2](http://www.raywenderlich.com/20897/beginning-auto-layout-part-2-of-2)<br/>
+- [WWDC 2012: Best Practices for Mastering Auto Layout](https://developer.apple.com/videos/wwdc/2012/?id=228)<br/>
 
