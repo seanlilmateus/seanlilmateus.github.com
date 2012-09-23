@@ -38,8 +38,8 @@ NSLayoutConstraint.constraintWithItem(view1,
                              constant: 0)
 ``` 
 ####what we want to achieve:
-{% img /images/posts/auto_layout_original_portrait.png 200 300 iPhone layout #1 %}
-{% img /images/posts/auto_layout_original_landscape.png 300 200 iPhone layout #3 %}<br />
+{% img /images/posts/auto_layout_colored_portrait.png 200 300 iPhone layout #2 %}
+{% img /images/posts/auto_layout_colored_landscape.png 300 200 Phone layout #4 %}<br />
 #### Explanation:
 We have a UIViewcontroller with 5 subviews:
 1. UILabel: (Title label) should be directed attached to the top of it superview
@@ -93,8 +93,9 @@ self.view.addConstraint(NSLayoutConstraint.constraintWithItem(@button_action,
 ```
 
 ##Final result:
-{% img /images/posts/auto_layout_colored_portrait.png 200 300 iPhone layout #2 %}
-{% img /images/posts/auto_layout_colored_landscape.png 300 200 Phone layout #4 %}
+{% img /images/posts/auto_layout_original_portrait.png 200 300 iPhone layout #1 %}
+{% img /images/posts/auto_layout_original_landscape.png 300 200 iPhone layout #3 %}<br />
+
 This code might work on all devices the same [iphone, retina iphone and iphone 5]
 the example code on [github](https://github.com/seanlilmateus/MAStockPriceFetcher) include some localization tweaks, it shows what are the benifits of autolayout for localization and other stuffs.
 
