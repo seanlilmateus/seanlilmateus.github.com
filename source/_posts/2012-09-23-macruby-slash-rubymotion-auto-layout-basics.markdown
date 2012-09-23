@@ -50,7 +50,7 @@ We have a UIViewcontroller with 5 subviews:
 we want that all this relationship remains, don't matter how the superview ratio changes.
 
 ####how does it looks like in code?
-``` ruby Discover if a number is prime http://www.noulakaz.net/weblog/2007/03/18/a-regular-expression-to-check-for-prime-numbers/ Source article
+``` ruby Discover if a number is prime https://github.com/seanlilmateus/MAStockPriceFetcher Source article
 # first of all we need an hash with our views and the name that we want to use tho refer them 
 views_dict = { 
 	"title_label" => @title_label, 
