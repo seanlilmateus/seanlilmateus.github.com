@@ -46,7 +46,7 @@ There are two ways to submit a block to a queue, the first is the asynchronous e
 The second method is the **Dispatch::Queue#sync** which submits a block on a dispatch queue and waits until that block completes. Unlike the **Dispatch::Queue#async** method, the block are synchronously executed. e.g:
 ```ruby
 	queue = Dispatch::Queue.concurrent('com.company.app.task')
-	queue.async { puts :hallo }
+	queue.sync { puts :hallo }
 ```
 
 #### Submitting blocks later:
@@ -94,4 +94,3 @@ Sometimes when dealing with Cocoa / CocoaTouch API's you will need to have acces
  <em id="one">¹ Concurrently executed blocks may complete out of order</em><br/>
  <em id="two">² the queue names/labels are meant to help you debugging your application, and it should follow the reverse-DNS style convention</em>
  </div>
- 
