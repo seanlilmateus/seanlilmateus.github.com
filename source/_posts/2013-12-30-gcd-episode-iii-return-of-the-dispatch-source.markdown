@@ -30,7 +30,7 @@ All the `Dispatch::Source` types have the same initialization scheme:
 		- [RETURN]
     		- Returns a Dispatch::Source instance.
 
-Well there is no rule without acception, for this case, the acception is the `Dispatch::Source.timer`
+Well there is no rule without exception, in this case the exception is `Dispatch::Source.timer`
 
 	- timer(delay, interval, leeway, queue) { ... } -> Source
 		- [PARAM] delay:
@@ -229,8 +229,11 @@ This is the last part of the GCD Series. The coming posts will cover other topic
 
 
  <h2 id="source">Sources:</h2> 
+
 - [Macruby WIKI - Dispatch::Source Class][mrw]
+
 - [OS X Man Pages](https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man3/dispatch_source_cancel.3.html)
+
 
 [ds]:https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man3/dispatch_source_create.3.html
 [gcd]:https://developer.apple.com/library/mac/documentation/Performance/Reference/GCD_libdispatch_Ref/Reference/reference.html
