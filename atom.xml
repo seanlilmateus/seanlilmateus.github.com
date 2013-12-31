@@ -1,134 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
 
-<!DOCTYPE HTML>
-
-<html>
-
-<head>
-	<meta charset="utf-8">
-	<title>Mateus - Welt</title>
-	<meta name="author" content="Mateus Armando">
-
-	
-	<meta name="description" content="Dec 30th, 2013 GCD Episode III: Return of the Dispatch Source Today we will divy into dispatch source, first of all let&#8217;s specify what Dipatch &hellip;">
-	
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-	<link href="/atom.xml" rel="alternate" title="Mateus - Welt" type="application/atom+xml">
-	
-	<link rel="canonical" href="http://seanlilmateus.github.com/">
-	<link href="/favicon.png" rel="shortcut icon">
-	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
-	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-	<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+  <title><![CDATA[Mateus - Welt]]></title>
+  <link href="http://seanlilmateus.github.com/atom.xml" rel="self"/>
+  <link href="http://seanlilmateus.github.com/"/>
+  <updated>2013-12-31T01:22:22+01:00</updated>
+  <id>http://seanlilmateus.github.com/</id>
+  <author>
+    <name><![CDATA[Mateus Armando]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
 
   
-
-</head>
-
-
-<body>
-	<div class="container">
-		<div class="left-col">
-			<div class="intrude-less">
-			<header id="header" class="inner"><div class="profilepic">
-	
-	<img src="http://www.gravatar.com/avatar/ada7e1cbace75a5d37a116bd2d20dbc3?s=160" alt="Profile Picture" style="width: 160px;" />
-	
-</div>
-<hgroup>
-  <h1><a href="/">Mateus - Welt</a></h1>
-  
-    <h2>Die Welt verstehen | Understand the world</h2>
-  
-</hgroup>
-
-<nav id="main-nav"><ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-</ul>
-
-</nav>
-<nav id="sub-nav">
-	<div class="social">
-		
-		
-		
-		
-			<a class="twitter" href="http://twitter.com/seanlilmateus" title="Twitter">Twitter</a>
-		
-		
-			<a class="github" href="https://github.com/seanlilmateus" title="GitHub">GitHub</a>
-		
-		
-		
-		
-		
-		
-		
-		
-		
-			<a class="rss" href="/atom.xml" title="RSS">RSS</a>
-		
-	</div>
-</nav>
-</header>				
-			</div>
-		</div>	
-		<div class="mid-col">
-			
-				
-<div id="banner" class="inner">
-	<div class="container">
-		<ul class="feed"></ul>
-	</div>
-	<small><a href="http://twitter.com/seanlilmateus">seanlilmateus</a> @ <a href="http://twitter.com">Twitter</a></small>
-	<div class="loading">Loading...</div>
-</div>
-<script src="/javascripts/twitter.js"></script>
-<script type="text/javascript">
-	(function($){
-		$('#banner').getTwitterFeed('seanlilmateus', 2, false);
-	})(jQuery);
-</script>
-
-			
-			<div class="mid-col-container">
-				<div id="content" class="inner">
-<div itemscope itemtype="http://schema.org/Blog">
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-12-30T23:03:00+01:00" data-updated="true" itemprop="datePublished">Dec 30<span>th</span>, 2013</time></div>
-		<div class="tags">
-
-</div>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2013/12/30/gcd-episode-iii-return-of-the-dispatch-source/" itemprop="url">GCD Episode III: Return of the Dispatch Source</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<p>Today we will divy into <a href="https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man3/dispatch_source_create.3.html">dispatch source</a>, first of all let&#8217;s specify what <a href="https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man3/dispatch_source_create.3.html">Dipatch::Source</a> stands for. A <a href="https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man3/dispatch_source_create.3.html">dispatch source</a> is a <a href="https://developer.apple.com/library/mac/documentation/Performance/Reference/GCD_libdispatch_Ref/Reference/reference.html">Grand Central Dispatch (GCD)</a> data structure that you create to process system-related events.</p>
+  <entry>
+    <title type="html"><![CDATA[GCD Episode III: Return of the Dispatch Source]]></title>
+    <link href="http://seanlilmateus.github.com/blog/2013/12/30/gcd-episode-iii-return-of-the-dispatch-source/"/>
+    <updated>2013-12-30T23:03:00+01:00</updated>
+    <id>http://seanlilmateus.github.com/blog/2013/12/30/gcd-episode-iii-return-of-the-dispatch-source</id>
+    <content type="html"><![CDATA[<p>Today we will divy into <a href="https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man3/dispatch_source_create.3.html">dispatch source</a>, first of all let&#8217;s specify what <a href="https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man3/dispatch_source_create.3.html">Dipatch::Source</a> stands for. A <a href="https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man3/dispatch_source_create.3.html">dispatch source</a> is a <a href="https://developer.apple.com/library/mac/documentation/Performance/Reference/GCD_libdispatch_Ref/Reference/reference.html">Grand Central Dispatch (GCD)</a> data structure that you create to process system-related events.</p>
 
 <h4>In Other Words:</h4>
 
@@ -485,41 +375,15 @@
 <p> <h2 id="source">Sources:</h2>
 - <a href="https://github.com/MacRuby/MacRuby/wiki/Dispatch::Source-Class">Macruby WIKI - Dispatch::Source Class</a>
 - <a href="https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man3/dispatch_source_cancel.3.html">OS X Man Pages</a></p>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
+]]></content>
+  </entry>
   
-
-
-<time datetime="2012-09-23T15:23:00+02:00" data-updated="true" itemprop="datePublished">Sep 23<span>rd</span>, 2012</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/gcd/'>GCD</a>, <a class='category' href='/blog/categories/grand-central-dispatch/'>Grand Central Dispatch</a>, <a class='category' href='/blog/categories/macruby/'>MacRuby</a>, <a class='category' href='/blog/categories/ruby/'>Ruby</a>, <a class='category' href='/blog/categories/rubymotion/'>Rubymotion</a>
-
-
-</div>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2012/09/23/macruby-slash-rubymotion-auto-layout-basics/" itemprop="url">MacRuby/Rubymotion Auto Layout Basics</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<p>Until now whenever we used wanted to layout views on Rubymotion or MacRuby we harcoded the size and position of the UI elements. To achieve a little of dynamic we used the old style auto resizing masking.
+  <entry>
+    <title type="html"><![CDATA[MacRuby/Rubymotion Auto Layout Basics]]></title>
+    <link href="http://seanlilmateus.github.com/blog/2012/09/23/macruby-slash-rubymotion-auto-layout-basics/"/>
+    <updated>2012-09-23T15:23:00+02:00</updated>
+    <id>http://seanlilmateus.github.com/blog/2012/09/23/macruby-slash-rubymotion-auto-layout-basics</id>
+    <content type="html"><![CDATA[<p>Until now whenever we used wanted to layout views on Rubymotion or MacRuby we harcoded the size and position of the UI elements. To achieve a little of dynamic we used the old style auto resizing masking.
 With this article you&#8217;ll get basic knowledge about the Cocoa/CocoaTouch Auto Layout architecture. For more on this topic you&#8217;re strongly encouraged to check the sources<a href="#source">¹</a>.</p>
 
 <p>The Auto Layout system let use defining layout <strong>constraints</strong> for the user interface elements, these <strong>constraints</strong> represent relationship between user interface elemets such as &#8220;these views line up head to tail&#8221; or &#8220;this button should move with this split view subview&#8221;. When laying out the user interface, a constraint satisfaction system arranges the elements in a way that most closely meets the constraints. if you configure constraints that the system cannot be satisfy, an exception is thrown.</p>
@@ -537,7 +401,7 @@ Typically, you specify the constraints in Interface Builder, well but you and an
 
 <ul>
 <li> <code id="ascii">H:|-[input_field]-[action_button]-|<br/></code><br />
-<img src="/images/posts/ascii.png"><br /></li>
+<img src="http://seanlilmateus.github.com/images/posts/ascii.png"><br /></li>
 <li> <code id="linear">view1.attr1 &lt; relation > view2.attr2 * multiplier + constant</code><br /></li>
 </ul>
 
@@ -565,8 +429,8 @@ Typically, you specify the constraints in Interface Builder, well but you and an
 
 <h4>what we want to achieve:</h4>
 
-<p><img src="/images/posts/auto_layout_colored_portrait.png" width="200" height="300" title="iPhone layout #2" >
-<img src="/images/posts/auto_layout_colored_landscape.png" width="300" height="200" title="Phone layout #4" ><br /></p>
+<p><img src="http://seanlilmateus.github.com/images/posts/auto_layout_colored_portrait.png" width="200" height="300" title="iPhone layout #2" >
+<img src="http://seanlilmateus.github.com/images/posts/auto_layout_colored_landscape.png" width="300" height="200" title="Phone layout #4" ><br /></p>
 
 <h4>Explanation:</h4>
 
@@ -663,8 +527,8 @@ we want that all this relationship remains, don&#8217;t matter how the superview
 
 <h2>Final result:</h2>
 
-<p><img src="/images/posts/auto_layout_original_portrait.png" width="200" height="300" title="iPhone layout #1" >
-<img src="/images/posts/auto_layout_original_landscape.png" width="300" height="200" title="iPhone layout #3" ><br /></p>
+<p><img src="http://seanlilmateus.github.com/images/posts/auto_layout_original_portrait.png" width="200" height="300" title="iPhone layout #1" >
+<img src="http://seanlilmateus.github.com/images/posts/auto_layout_original_landscape.png" width="300" height="200" title="iPhone layout #3" ><br /></p>
 
 <p>This code might work on all devices the same [iphone, retina iphone and iphone 5]
 the example code on <a href="https://github.com/seanlilmateus/MAStockPriceFetcher">github</a> include some localization tweaks, it shows what are the benifits of autolayout for localization and other stuffs.</p>
@@ -675,37 +539,15 @@ the example code on <a href="https://github.com/seanlilmateus/MAStockPriceFetche
 - <a href="http://www.raywenderlich.com/20897/beginning-auto-layout-part-1-of-2">Beginning Auto Layout in iOS 6: Part 1 / 2</a><br/>
 - <a href="http://www.raywenderlich.com/20897/beginning-auto-layout-part-2-of-2">Beginning Auto Layout in iOS 6: Part 2 / 2</a><br/>
 - <a href="https://developer.apple.com/videos/wwdc/2012/?id=228">WWDC 2012: Best Practices for Mastering Auto Layout</a><br/></p>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
+]]></content>
+  </entry>
   
-
-
-<time datetime="2012-06-10T21:05:00+02:00" data-updated="true" itemprop="datePublished">Jun 10<span>th</span>, 2012</time></div>
-		<div class="tags">
-
-</div>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2012/06/10/gcd-for-everyone/" itemprop="url">GCD for Everyone</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<p>This is the third part of a serie of four blog articles on how to use Grand Central Dispatch with Macruby and rubymotion, today I want to Introduce you to tDispatch Semaphores.</p>
+  <entry>
+    <title type="html"><![CDATA[GCD for Everyone]]></title>
+    <link href="http://seanlilmateus.github.com/blog/2012/06/10/gcd-for-everyone/"/>
+    <updated>2012-06-10T21:05:00+02:00</updated>
+    <id>http://seanlilmateus.github.com/blog/2012/06/10/gcd-for-everyone</id>
+    <content type="html"><![CDATA[<p>This is the third part of a serie of four blog articles on how to use Grand Central Dispatch with Macruby and rubymotion, today I want to Introduce you to tDispatch Semaphores.</p>
 
 <h2>Understanding and using Dispatch Semaphores</h2>
 
@@ -1990,41 +1832,15 @@ I think you should use an
 <h2><em>Recommendation:</em></h2>
 
 <p> <em>- <a href="http://developer.apple.com/library/ios/#documentation/General/Conceptual/ConcurrencyProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40008091-CH1-SW1">Apple&#8217;s Concurrency Programming Guide</a></em><br/></p>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
+]]></content>
+  </entry>
   
-
-
-<time datetime="2012-06-03T22:12:00+02:00" data-updated="true" itemprop="datePublished">Jun 3<span>rd</span>, 2012</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/gcd/'>GCD</a>, <a class='category' href='/blog/categories/grand-central-dispatch/'>Grand Central Dispatch</a>, <a class='category' href='/blog/categories/macruby/'>MacRuby</a>, <a class='category' href='/blog/categories/ruby/'>Ruby</a>, <a class='category' href='/blog/categories/rubymotion/'>Rubymotion</a>
-
-
-</div>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2012/06/03/dancing-with-gcd-group-and-barriers/" itemprop="url">Dancing With GCD Group and Barriers</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<p>Today we will dinner with GCD Group and barriers features. This article assumes you have already read my previous article <a href="/blog/2012/05/31/getting-started-with-grand-central-dispatch-in-macruby-and-rubymotion/">Getting Started With GCD in MacRuby &amp; Rubymotion</a>.</p>
+  <entry>
+    <title type="html"><![CDATA[Dancing with GCD Group and Barriers]]></title>
+    <link href="http://seanlilmateus.github.com/blog/2012/06/03/dancing-with-gcd-group-and-barriers/"/>
+    <updated>2012-06-03T22:12:00+02:00</updated>
+    <id>http://seanlilmateus.github.com/blog/2012/06/03/dancing-with-gcd-group-and-barriers</id>
+    <content type="html"><![CDATA[<p>Today we will dinner with GCD Group and barriers features. This article assumes you have already read my previous article <a href="http://seanlilmateus.github.com/blog/2012/05/31/getting-started-with-grand-central-dispatch-in-macruby-and-rubymotion/">Getting Started With GCD in MacRuby &amp; Rubymotion</a>.</p>
 
 <p>Now that we know how to use Grand Central Dispatch to make our application concurrent and parallel, this time I&#8217;ll try to show you how GCD makes it easier for us to syncronize blocks and queue tasks.</p>
 
@@ -2249,41 +2065,15 @@ Let&#8217;s imagine that we have a Hash that&#8217;s being used as a cache. Hash
 <h2><em>Recommendation:</em></h2>
 
 <p> <em>- <a href="http://developer.apple.com/library/ios/#documentation/General/Conceptual/ConcurrencyProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40008091-CH1-SW1">Apple&#8217;s Concurrency Programming Guide</a></em><br/></p>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
+]]></content>
+  </entry>
   
-
-
-<time datetime="2012-05-31T18:03:00+02:00" data-updated="true" itemprop="datePublished">May 31<span>st</span>, 2012</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/gcd/'>GCD</a>, <a class='category' href='/blog/categories/grand-central-dispatch/'>Grand Central Dispatch</a>, <a class='category' href='/blog/categories/macruby/'>MacRuby</a>, <a class='category' href='/blog/categories/ruby/'>Ruby</a>, <a class='category' href='/blog/categories/rubymotion/'>Rubymotion</a>
-
-
-</div>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2012/05/31/getting-started-with-grand-central-dispatch-in-macruby-and-rubymotion/" itemprop="url">Getting Started With GCD in MacRuby &amp; Rubymotion</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<h1>Grand Central Dispatch</h1>
+  <entry>
+    <title type="html"><![CDATA[Getting started with GCD in MacRuby &amp; Rubymotion]]></title>
+    <link href="http://seanlilmateus.github.com/blog/2012/05/31/getting-started-with-grand-central-dispatch-in-macruby-and-rubymotion/"/>
+    <updated>2012-05-31T18:03:00+02:00</updated>
+    <id>http://seanlilmateus.github.com/blog/2012/05/31/getting-started-with-grand-central-dispatch-in-macruby-and-rubymotion</id>
+    <content type="html"><![CDATA[<h1>Grand Central Dispatch</h1>
 
 <p>Grand Central Dispatch is the apple way to perform concurrent programming, by using it you&#8217;re able to divide your program into peaces <em>tasks</em> that can be executed by a queue concurrently or serially. Since GCD is a low level C API, you can&#8217;t communicate directly with it, but MacRuby has a wrapper for that.</p>
 
@@ -2416,85 +2206,17 @@ If you want to ensure that tasks execute in a predictable order, you should use 
  <em id="one">¹ Concurrently executed blocks may complete out of order</em><br/>
  <em id="two">² the queue names/labels are meant to help you debugging your application, and it should follow the reverse-DNS style convention</em>
  </div></p>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
+]]></content>
+  </entry>
   
-
-
-<time datetime="2012-04-29T19:31:00+02:00" data-updated="true" itemprop="datePublished">Apr 29<span>th</span>, 2012</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/macruby/'>MacRuby</a>, <a class='category' href='/blog/categories/github/'>github</a>, <a class='category' href='/blog/categories/octopress/'>octopress</a>
-
-
-</div>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2012/04/29/welcome-post/" itemprop="url">Welcome Post</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<p>Welcome to my Mateus&#8217; Welt, from now on I&#8217;ll post article and some MacRuby tricks.
+  <entry>
+    <title type="html"><![CDATA[Welcome Post]]></title>
+    <link href="http://seanlilmateus.github.com/blog/2012/04/29/welcome-post/"/>
+    <updated>2012-04-29T19:31:00+02:00</updated>
+    <id>http://seanlilmateus.github.com/blog/2012/04/29/welcome-post</id>
+    <content type="html"><![CDATA[<p>Welcome to my Mateus&#8217; Welt, from now on I&#8217;ll post article and some MacRuby tricks.
 If you&#8217;re interested on writing a guest post for this Blog, you&#8217;re welcome!</p>
-
-		
-		
-	</div>
-
-</article>
-
-</div>
-<nav id="pagenavi">
-    
-    
-    <div class="center"><a href="/blog/archives">Blog Archives</a></div>
-</nav></div>
-			</div>
-			<footer id="footer" class="inner"><p>
-  Copyright &copy; 2013 - Mateus Armando -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
-</p>
-
-Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
-			
-
-
-
-
-
-
-
-  <script type="text/javascript">
-    (function(){
-      var twitterWidgets = document.createElement('script');
-      twitterWidgets.type = 'text/javascript';
-      twitterWidgets.async = true;
-      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
-      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
-    })();
-  </script>
-
-
-
-
-
-		</div>
-	</div>
-</body>
-</html>
+]]></content>
+  </entry>
+  
+</feed>

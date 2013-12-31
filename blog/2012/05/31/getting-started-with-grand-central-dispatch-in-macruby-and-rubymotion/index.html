@@ -1,0 +1,288 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Getting started with GCD in MacRuby &amp; Rubymotion - Mateus - Welt</title>
+	<meta name="author" content="Mateus Armando">
+
+	
+	<meta name="description" content="Getting Started With GCD in MacRuby &amp; Rubymotion Grand Central Dispatch Grand Central Dispatch is the apple way to perform concurrent &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="Mateus - Welt" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://seanlilmateus.github.com/blog/2012/05/31/getting-started-with-grand-central-dispatch-in-macruby-and-rubymotion/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	
+	<img src="http://www.gravatar.com/avatar/ada7e1cbace75a5d37a116bd2d20dbc3?s=160" alt="Profile Picture" style="width: 160px;" />
+	
+</div>
+<hgroup>
+  <h1><a href="/">Mateus - Welt</a></h1>
+  
+    <h2>Die Welt verstehen | Understand the world</h2>
+  
+</hgroup>
+
+<nav id="main-nav"><ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+			<a class="twitter" href="http://twitter.com/seanlilmateus" title="Twitter">Twitter</a>
+		
+		
+			<a class="github" href="https://github.com/seanlilmateus" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+			<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+<div id="banner" class="inner">
+	<div class="container">
+		<ul class="feed"></ul>
+	</div>
+	<small><a href="http://twitter.com/seanlilmateus">seanlilmateus</a> @ <a href="http://twitter.com">Twitter</a></small>
+	<div class="loading">Loading...</div>
+</div>
+<script src="/javascripts/twitter.js"></script>
+<script type="text/javascript">
+	(function($){
+		$('#banner').getTwitterFeed('seanlilmateus', 2, false);
+	})(jQuery);
+</script>
+
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Getting Started With GCD in MacRuby &amp; Rubymotion</h1>
+	<div class="entry-content" itemprop="articleBody"><h1>Grand Central Dispatch</h1>
+
+<p>Grand Central Dispatch is the apple way to perform concurrent programming, by using it you&#8217;re able to divide your program into peaces <em>tasks</em> that can be executed by a queue concurrently or serially. Since GCD is a low level C API, you can&#8217;t communicate directly with it, but MacRuby has a wrapper for that.</p>
+
+<h3>What are Queues?</h3>
+
+<p>You can think of <em><strong>Dispatch::Queue</strong>s</em> as workers waiting to execute undefined tasks, the can either execute tasks concurrently or serially.
+A Serial Queue executes a single task at once, a concurrent queue is capable to execute as many tasks simultaneously as your system allow it execute.</p>
+
+<h2>Creating and Managing Queues:</h2>
+
+<p>GCD comes with three different types of queues:<br />
+1) <em><strong>The Main queue:</strong></em> the main queue is the application aka. main thread, you can get this queue by using:</p>
+
+<figure class='code'><figcaption><span>get the man queue</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">main_queue</span> <span class="o">=</span> <span class="no">Dispatch</span><span class="o">::</span><span class="no">Queue</span><span class="o">.</span><span class="n">main</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>2) <em><strong>Global / Concurrents queue:</strong></em> on pre Lion / iOS5 version of GCD there were only one concurrent queue that could have three defined priorities, but now this changed. You can create as much concurrent queues as you want that execute multiple blocks at the same time<a href="#one">¹</a>.</p>
+
+<figure class='code'><figcaption><span>Get / Create Concurrent queues</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># get the global concurrent queue on 10.6 OSX [priority can be :high, :low or :default]</span>
+</span><span class='line'><span class="n">queue</span> <span class="o">=</span> <span class="no">Dispatch</span><span class="o">::</span><span class="no">Queue</span><span class="o">.</span><span class="n">concurrent</span><span class="p">(</span><span class="n">priority</span><span class="o">=</span><span class="ss">:default</span><span class="p">)</span>
+</span><span class='line'><span class="c1"># On Lion or iOS5 </span>
+</span><span class='line'><span class="n">queue</span> <span class="o">=</span> <span class="no">Dispatch</span><span class="o">::</span><span class="no">Queue</span><span class="o">.</span><span class="n">concurrent</span><span class="p">(</span><span class="s2">&quot;com.company.application.tasks&quot;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>3) <em><strong>Customized queues:</strong></em> are lightweight list of blocks which can be executed one at a time in FIFO order, they can be compared with Ruby mutex or traditional ruby thread. They are perfectly suited for synchronization mechanism without have to deal with <strong>lock</strong> and <strong>unlock</strong>.<a href="#two">²</a>
+If you want to ensure that tasks execute in a predictable order, you should use the customized queues.</p>
+
+<figure class='code'><figcaption><span>Create a custom Queue</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">queue</span> <span class="o">=</span> <span class="no">Dispatch</span><span class="o">::</span><span class="no">Queue</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;com.company.application.task&quot;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
+
+<h2>Submitting blocks to queues:</h2>
+
+<p>There are two ways to submit a block to a queue, the first is the asynchronous execution, which submits a block to a queue and returns immediately. e.g:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">queue</span> <span class="o">=</span> <span class="no">Dispatch</span><span class="o">::</span><span class="no">Queue</span><span class="o">.</span><span class="n">concurrent</span><span class="p">(</span><span class="s1">&#39;com.company.app.task&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">queue</span><span class="o">.</span><span class="n">async</span> <span class="p">{</span> <span class="nb">puts</span> <span class="ss">:hallo</span> <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The second method is the <strong>Dispatch::Queue#sync</strong> which submits a block on a dispatch queue and waits until that block completes. Unlike the <strong>Dispatch::Queue#async</strong> method, the block are synchronously executed. e.g:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">queue</span> <span class="o">=</span> <span class="no">Dispatch</span><span class="o">::</span><span class="no">Queue</span><span class="o">.</span><span class="n">concurrent</span><span class="p">(</span><span class="s1">&#39;com.company.app.task&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">queue</span><span class="o">.</span><span class="n">async</span> <span class="p">{</span> <span class="nb">puts</span> <span class="ss">:hallo</span> <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Submitting blocks later:</h4>
+
+<p><strong>Dispatch::Queue#after</strong> submits a block asynchronously to the given queue after the given delay (in seconds) is passed.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">queue</span><span class="o">.</span><span class="n">after</span><span class="p">(</span><span class="mi">0</span><span class="o">.</span><span class="mi">5</span><span class="p">)</span> <span class="p">{</span> <span class="nb">puts</span> <span class="s1">&#39;waiting for the world to change&#39;</span> <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Concurrently executing one block many times</h4>
+
+<p><strong>Dispatch::Queue#apply</strong> submits a block to a dispatch queue for multiple execution, if the execution queue is a concurrent, the block will be executed concurrently.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">queue</span> <span class="o">=</span> <span class="no">Dispatch</span><span class="o">::</span><span class="no">Queue</span><span class="o">.</span><span class="n">concurrent</span><span class="p">(</span><span class="s1">&#39;com.company.app.task&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="vi">@result</span> <span class="o">=</span> <span class="o">[]</span>
+</span><span class='line'><span class="n">queue</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="p">{</span><span class="o">|</span><span class="n">idx</span><span class="o">|</span> <span class="vi">@result</span><span class="o">[</span><span class="n">idx</span><span class="o">]</span> <span class="o">=</span> <span class="n">idx</span><span class="o">*</span><span class="n">idx</span> <span class="p">}</span>
+</span><span class='line'><span class="nb">p</span> <span class="vi">@result</span>  <span class="c1">#=&gt; [0, 1, 4, 9, 16]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Managing Dispatch Objects</h3>
+
+<p>Dispatch Objects allow to manage the blocks execution by canceling, suspend and resume it.</p>
+
+<h4>Suspending and resuming execution:</h4>
+
+<figure class='code'><figcaption><span>suspending and resuming execution</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">queue</span> <span class="o">=</span> <span class="no">Dispatch</span><span class="o">::</span><span class="no">Queue</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;com.company.app.task&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">queue</span><span class="o">.</span><span class="n">async</span> <span class="p">{</span> <span class="nb">sleep</span> <span class="mi">1</span><span class="p">;</span> <span class="nb">puts</span> <span class="ss">:hallo</span> <span class="p">}</span>
+</span><span class='line'><span class="n">queue</span><span class="o">.</span><span class="n">suspend!</span>
+</span><span class='line'><span class="n">queue</span><span class="o">.</span><span class="n">suspended?</span>
+</span><span class='line'><span class="n">queue</span><span class="o">.</span><span class="n">resume!</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Getting the internal Queue Object:</h4>
+
+<p>Sometimes when dealing with Cocoa / CocoaTouch API&#8217;s you will need to have access to the Queue object, for this purpose Macruby&#8217;s GDC-Wrapper delievers a method to get the queue object: <em><strong>Dispatch::Queue#dispatch_object</strong></em></p>
+
+<h3>Dispatch Constants</h3>
+
+<p><em><strong>Dispatch::TIME_FOREVER</strong></em>: means infinity, queue or semaphore will wait till blocks are done <br />
+<em><strong> Dispatch::TIME_NOW</strong></em>: means zero, queue or semaphore will not wait for blocks at all<br /></p>
+
+<h1>Coming next</h1>
+
+<h3>Dispatch Barrier</h3>
+
+<h3>Dispatch Group</h3>
+
+<h3>Dispatch Semaphore</h3>
+
+<h3>Dispatch Source</h3>
+
+<h2><em>Recommendation:</em></h2>
+
+<p> <em>- <a href="http://macruby.macosforge.org/documentation/gcd.html">An Introduction to GCD with MacRuby by Patrick Thomson</a></em><br/>
+ <em>-<a href="http://www.mikeash.com/pyblog/friday-qa-2009-08-28-intro-to-grand-central-dispatch-part-i-basics-and-dispatch-queues.html">Intro to Grand Central Dispatch, Part I: Basics and Dispatch Queues by Mike Ash</a></em></p>
+
+<p> <div class="post-it">
+ <em id="one">¹ Concurrently executed blocks may complete out of order</em><br/>
+ <em id="two">² the queue names/labels are meant to help you debugging your application, and it should follow the reverse-DNS style convention</em>
+ </div></p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+</div>
+			</div>
+			<footer id="footer" class="inner"><p>
+  Copyright &copy; 2013 - Mateus Armando -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+			
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+		</div>
+	</div>
+</body>
+</html>
