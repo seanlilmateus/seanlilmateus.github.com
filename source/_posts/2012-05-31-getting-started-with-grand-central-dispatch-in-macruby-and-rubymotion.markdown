@@ -43,14 +43,14 @@ There are two ways to submit a block to a queue, the first is the asynchronous e
 	queue = Dispatch::Queue.concurrent('com.company.app.task')
 	queue.async { puts :hallo }
 ```
-The second method is the **Dispatch::Queue#sync** which submits a block on a dispatch queue and waits until that block completes. Unlike the **Dispatch::Queue#async** method, the block are synchronously executed. e.g:
+The second method is the **Dispatch::Queue#sync** which submits a block to a dispatch queue and waits until it completion. Unlike the **Dispatch::Queue#async** method, the block are synchronously executed. e.g:
 ```ruby
 	queue = Dispatch::Queue.concurrent('com.company.app.task')
-	queue.async { puts :hallo }
+	queue.sync { puts :hallo }
 ```
 
 #### Submitting blocks later:
-**Dispatch::Queue#after** submits a block asynchronously to the given queue after the given delay (in seconds) is passed.
+**Dispatch::Queue#after** submits a block asynchronously to the given queue after, but the block will not be executed until the given delay (in seconds) has past.
 ```ruby
 	queue.after(0.5) { puts 'waiting for the world to change' }
 ```
