@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: MacRuby | Mateus - Welt]]></title>
+  <link href="http://seanlilmateus.github.com/blog/categories/macruby/atom.xml" rel="self"/>
+  <link href="http://seanlilmateus.github.com/"/>
+  <updated>2014-02-20T21:24:03+01:00</updated>
+  <id>http://seanlilmateus.github.com/</id>
+  <author>
+    <name><![CDATA[Mateus Armando]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[MacRuby/Rubymotion Auto Layout Basics]]></title>
+    <link href="http://seanlilmateus.github.com/blog/2012/09/23/macruby-slash-rubymotion-auto-layout-basics/"/>
+    <updated>2012-09-23T15:23:00+02:00</updated>
+    <id>http://seanlilmateus.github.com/blog/2012/09/23/macruby-slash-rubymotion-auto-layout-basics</id>
+    <content type="html"><![CDATA[<p>Until now whenever we used wanted to layout views on Rubymotion or MacRuby we harcoded the size and position of the UI elements. To achieve a little of dynamic we used the old style auto resizing masking.
+With this article you'll get basic knowledge about the Cocoa/CocoaTouch Auto Layout architecture. For more on this topic you're strongly encouraged to check the sources<a href="#source">¹</a>.</p>
+
+<p>The Auto Layout system let use defining layout <strong>constraints</strong> for the user interface elements, these <strong>constraints</strong> represent relationship between user interface elemets such as "these views line up head to tail" or "this button should move with this split view subview". When laying out the user interface, a constraint satisfaction system arranges the elements in a way that most closely meets the constraints. if you configure constraints that the system cannot be satisfy, an exception is thrown.</p>
+
+<h4>What are constraints?</h4>
+
+<p>Constraints are rules for layout elements in your user interface. For example the help you to specify the a text label should be centered on its superview and keep the same proportional to its superview even though the superview sizes changed. Let's illustrate it by real life scenario:
+- Localization example (image)
+- Auto Rotation example (image)</p>
+
+<p>Constraints themselves are objects, actually instances of <a href="https://developer.apple.com/library/ios/documentation/AppKit/Reference/NSLayoutConstraint_Class/NSLayoutConstraint/NSLayoutConstraint.html#//apple_ref/occ/cl/NSLayoutConstraint">NSLayoutConstraint</a> that you can install on views objects (instance of UIView on iOS 6 or Instace of NSView on Mac OS X ≥ 10.7)
+Typically, you specify the constraints in Interface Builder, well but you and and me can do it better :-), we will create it programmatically by using an ASCII-art<a href="#ascii">²</a> inspired format string and by using a form that looks very much like an linear equations<a href="#equations">³</a>:</p>
+
+<h4>pseudocode:</h4>
+
+<ul>
+<li> <code id="ascii">H:|-[input_field]-[action_button]-|<br/></code><br />
+<img src="/images/posts/ascii.png"><br /></li>
+<li> <code id="linear">view1.attr1 &lt; relation > view2.attr2 * multiplier + constant</code><br />
+``` ruby
+
+<h1>view1.width == 0.5 * view2.width + 0</h1>
+
+NSLayoutConstraint.constraintWithItem(view1,
+
+<pre><code>                    attribute: NSLayoutAttributeWidth,
+                    relatedBy: NSLayoutRelationEqual,
+                       toItem: view2,
+                    attribute: NSLayoutAttributeWidth,
+                   multiplier: 0.5,
+                     constant: 0)
+</code></pre>
+
+```
+
+<h4>what we want to achieve:</h4>
+
+<img src="/images/posts/auto_layout_colored_portrait.png" width="200" height="300" title="iPhone layout #2" >
+<img src="/images/posts/auto_layout_colored_landscape.png" width="300" height="200" title="Phone layout #4" ><br />
+
+<h4>Explanation:</h4>
+
+<p>We have a UIViewcontroller with 5 subviews:</p></li>
+<li>UILabel: (Title label) should be directed attached to the top of it superview</li>
+<li>UILabel: (subtitle label) should be direct attached to the bottom of the title label</li>
+<li>UITextField: (Symbol input field) the input field is placed 5pts from the bottom of the subtitle label</li>
+<li>UIButton: the (action button) is direct attached to the right size of the input text.</li>
+<li>UILabel: (disclaimer label), it's bottom side is placed 5 pts above the bottom of the superview.
+we want that all this relationship remains, don't matter how the superview ratio changes.</li>
+</ul>
+
+
+<h4>how does it looks like in code?</h4>
+
+<p>``` ruby Discover if a number is prime https://github.com/seanlilmateus/MAStockPriceFetcher Source article</p>
+
+<h1>first of all we need an hash with our views and the name that we want to use tho refer them</h1>
+
+<p>views_dict = {</p>
+
+<pre><code>"title_label" =&gt; @title_label, 
+"subtitle_label" =&gt; @subtitle_label, 
+"button_action" =&gt; @button_action, 
+"text_field" =&gt; @text_field, 
+"info_label" =&gt; @info_label 
+</code></pre>
+
+<p>}</p>
+
+<h1>we create two constraints:</h1>
+
+<h1>First row with the title_label</h1>
+
+<p>constraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|-[title_label]-|",</p>
+
+<pre><code>                                                options: 0, 
+                                                metrics: nil, 
+                                                  views: views_dict)
+</code></pre>
+
+<p>self.view.addConstraints(constraints)</p>
+
+<h1>second row with the subtitle_label</h1>
+
+<p>self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|-[subtitle_label]-|",</p>
+
+<pre><code>                                                            options: 0, 
+                                                            metrics: nil, 
+                                                              views: views_dict))
+</code></pre>
+
+<h1>third row with an infolabel centered</h1>
+
+<p>self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|-[info_label]-|",</p>
+
+<pre><code>                                                            options: 0, 
+                                                            metrics: nil, 
+                                                            views: views_dict))
+</code></pre>
+
+<p>metrics = {"width" => 100, "height"=> 80 }
+self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[info_label(==height@1000)]-5-|",</p>
+
+<pre><code>                                                              options: 0, #  
+                                                              metrics: metrics, 
+                                                                views: views_dict))
+</code></pre>
+
+<h1>@button_action.width == 0.5 * @text_field.width + 0</h1>
+
+<p>self.view.addConstraint(NSLayoutConstraint.constraintWithItem(@button_action,</p>
+
+<pre><code>                                                attribute: NSLayoutAttributeWidth,
+                                                relatedBy: NSLayoutRelationEqual,
+                                                   toItem: @text_field,
+                                                attribute: NSLayoutAttributeWidth,
+                                               multiplier: 0.5,
+                                                 constant: 0))
+</code></pre>
+
+<p>```</p>
+
+<h2>Final result:</h2>
+
+<p><img src="/images/posts/auto_layout_original_portrait.png" width="200" height="300" title="iPhone layout #1" >
+<img src="/images/posts/auto_layout_original_landscape.png" width="300" height="200" title="iPhone layout #3" ><br /></p>
+
+<p>This code might work on all devices the same [iphone, retina iphone and iphone 5]
+the example code on <a href="https://github.com/seanlilmateus/MAStockPriceFetcher">github</a> include some localization tweaks, it shows what are the benifits of autolayout for localization and other stuffs.</p>
+
+<p> <h2 id="source">Sources:</h2>
+- <a href="https://developer.apple.com/videos/wwdc/2011/includes/cocoa-autolayout.html#cocoa-autolayout">Cocoa Autolayout WWDC 2011 video</a><br/>
+- <a href="http://developer.apple.com/library/mac/#documentation/UserExperience/Conceptual/AutolayoutPG/Articles/Introduction.html#//apple_ref/doc/uid/TP40010853-CH1-DontLinkElementID_2">Cocoa Auto Layout Guide</a><br/>
+- <a href="http://www.raywenderlich.com/20897/beginning-auto-layout-part-1-of-2">Beginning Auto Layout in iOS 6: Part 1 / 2</a><br/>
+- <a href="http://www.raywenderlich.com/20897/beginning-auto-layout-part-2-of-2">Beginning Auto Layout in iOS 6: Part 2 / 2</a><br/>
+- <a href="https://developer.apple.com/videos/wwdc/2012/?id=228">WWDC 2012: Best Practices for Mastering Auto Layout</a><br/></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Dancing with GCD Group and Barriers]]></title>
+    <link href="http://seanlilmateus.github.com/blog/2012/06/03/dancing-with-gcd-group-and-barriers/"/>
+    <updated>2012-06-03T22:12:00+02:00</updated>
+    <id>http://seanlilmateus.github.com/blog/2012/06/03/dancing-with-gcd-group-and-barriers</id>
+    <content type="html"><![CDATA[<p>Today we will dinner with GCD Group and barriers features. This article assumes you have already read my previous article <a href="/blog/2012/05/31/getting-started-with-grand-central-dispatch-in-macruby-and-rubymotion/">Getting Started With GCD in MacRuby &amp; Rubymotion</a>.</p>
+
+<p>Now that we know how to use Grand Central Dispatch to make our application concurrent and parallel, this time I'll try to show you how GCD makes it easier for us to syncronize blocks and queue tasks.</p>
+
+<p>A dispatch group is a way to monitor a set of block objects for completion. (You can monitor the blocks synchronously or asynchronously depending on your needs.) Groups provide a useful synchronization mechanism for code that depends on the completion of other tasks. Dispatch::Group acts more or less like Thread#join in plain ruby.</p>
+
+<p>Let's look at some examples to figure out how how Dispatch::Group works:
+```ruby
+group = Dispatch::Group.new
+derpina_queue = Dispatch::Queue.concurrent(:high)   #Dispatch::Queue.concurrent("com.company.movie_night.get_wine")</p>
+
+<p>derp_queue = Dispatch::Queue.concurrent(:default)   #Dispatch::Queue.concurrent("com.company.movie_night.get_popcorn")</p>
+
+<p>derpina_queue.async(group) do
+  puts "go to wine cellar to get some Bordeaux"
+  i = 0
+  while i &lt; 99</p>
+
+<pre><code>puts "can't decide which one to drink"
+i += 1
+</code></pre>
+
+<p>  end
+end
+group.notify(derpina_queue) { warn "Derpina is back :-)" }</p>
+
+<p>derp_queue.async(group) do
+  puts "go to the kitchen pick some popcorn"
+  i = 0
+  while i &lt; 9999</p>
+
+<pre><code>puts "damn, I have to make new one"
+i += 1
+</code></pre>
+
+<p>  end
+end
+group.notify(derp_queue) { warn "Derp is back :-)" }</p>
+
+<p>group.wait
+puts "both are back, let's watch the movie"</p>
+
+<p>movie.play
+```</p>
+
+<p>On this example, Derpina will wait till Derp is back from the kitchen to press the play button. You don't have to use two queues, both tasks could be executed on the same queue.</p>
+
+<p>How useful are groups on GCD? well let's take a look into another example, do you know how difficult is to implement <a href="http://en.wikipedia.org/wiki/Futures_and_promises">Promises and Futures</a> in plain Ruby? well this is how you can implement in MacRuby or Rubymotion:</p>
+
+<p>```ruby
+include Dispatch
+class Future
+  def initialize(&amp;block)</p>
+
+<pre><code># Each thread gets its own FIFO queue upon which we will dispatch
+# the delayed computation passed in the &amp;block variable.
+Thread.current[:futures] ||= Queue.new("org.macruby.futures-#{Thread.current.object_id}")
+@group = Group.new
+# Asynchronously dispatch the future to the thread-local queue.
+Thread.current[:futures].async(@group) { @value = block.call }
+</code></pre>
+
+<p>  end
+  def value</p>
+
+<pre><code># Wait for the computation to finish. If it has already finished, then
+# just return the value in question.
+@group.wait
+@value
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>Now it’s easy to schedule long-running tasks in the background:
+```ruby
+some_result = Future.new do
+  p 'Engaging delayed computation!'
+  sleep 2.5
+  :done # Your result would go here.
+end</p>
+
+<p>p some_result.value
+```
+ <em>this example is brought to you by <a href="https://github.com/patrickt">patrickt (Patrick Thomson)</a> and <a href="https://github.com/benstiglitz">benstiglitz (Benjamin Stiglitz)</a></em></p>
+
+<h3>Barriers</h3>
+
+<p>I think we have enough of groups, now let's take a look into something new, barrier were introduced with OS X Lion and iOS 5. Barriers are a specialized version of the Dispatch::Queue#async method. <strong>When a block enqueued with barrier_async reaches the front of a private concurrent queue, it waits until all other enqueued blocks to finish executing, at which point the block is executed. No blocks submitted after a call to barrier_async will be executed until the enqueued block finishes. It returns immediately</strong> (from Macruby Source code)
+If the provided queue is not a concurrent private queue, this function behaves identically to the #async function.</p>
+
+<p>let's look into some code:
+<code>ruby Dispatch::Queue#barrier_async
+queue = Dispatch::Queue.concurrent('com.company.application.task')
+@i = ""
+queue.async { @i += 'a' }
+queue.async { @i += 'b' }
+queue.barrier_async { @i += 'c' }
+p @i #=&gt; either prints out 'abc' or 'bac'
+</code>
+When should we use #barrier_async ? Well barrier_async are pretty useful for example to manipulate data structures which can be read but not written concurrently.</p>
+
+<p>There is a second barrier method, which blocks until the provided task or block is executed.
+e.g.:
+<code>ruby Dispatch::Queue#barrier_sync
+queue = Dispatch::Queue.concurrent('com.company.application.task')
+@i = ""
+queue.async { @i += 'a' }
+queue.async { @i += 'b' }
+queue.barrier_sync { @i += 'c' } # blocks
+p @i #=&gt; either prints out 'abc' or 'bac'
+</code>
+<strong>more barrier example</strong> inspired by <a href="http://www.mikeash.com/pyblog/friday-qa-2011-10-14-whats-new-in-gcd.html">Mike Ash</a>
+Let's imagine that we have a Hash that's being used as a cache. Hash is thread safe for reading, but doesn't allow any concurrent access while modifying its contents, not even if the other access is simple reading."</p>
+
+<p>```ruby
+framework 'Foundation'</p>
+
+<p>class Cache
+  def initialize</p>
+
+<pre><code>@cache = Hash.new
+@queue = Dispatch::Queue.concurrent('com.company.application.cache')
+</code></pre>
+
+<p>  end</p>
+
+<p>  def []=(key, value)</p>
+
+<pre><code>@queue.barrier_async{ @cache[key] = value }  # GCD Version
+#@cache[key] = value                            # Ruby Version
+</code></pre>
+
+<p>  end</p>
+
+<p>  def <a href="key"></a></p>
+
+<pre><code>@queue.sync { return @cache[key] }       # GCD Version
+#@cache[key]                                    # Ruby Version
+</code></pre>
+
+<p>  end</p>
+
+<p>  def inspect</p>
+
+<pre><code>@cache
+</code></pre>
+
+<p>  end
+end</p>
+
+<p>cache = Cache.new
+list = File.read("/usr/share/dict/words").split.select{ |word| word[0,1].downcase == "a" }</p>
+
+<h1>cocoa's concurrent enumeration of NSArray</h1>
+
+<p>list.enumerateObjectsWithOptions(NSEnumerationConcurrent, usingBlock:-> word, idx, stop {
+  cache[idx.to_s] = word
+  p cache[idx.to_s]
+})
+```
+To have a better understanding, you should try both versions out (GCD and Ruby Version) one of them will hang, unfortunately the actual MacRuby version is not compiled on Mac OS X Lion, so Dispatch::Queue#barrier_async is not availible, but you can compile it yourself... or ask me on twitter, if I can send you an installer package ;-)</p>
+
+<h3>Final</h3>
+
+<p>Since one of biggest difference between Android and iOS application is the UI responsiveness, I hope this motivates you to use GCD to improving the user experience of your rubymotion application.</p>
+
+<h1>Coming next</h1>
+
+<h3>Dispatch Semaphore</h3>
+
+<h3>Dispatch Source</h3>
+
+<h2><em>Recommendation:</em></h2>
+
+<p> <em>- <a href="http://developer.apple.com/library/ios/#documentation/General/Conceptual/ConcurrencyProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40008091-CH1-SW1">Apple's Concurrency Programming Guide</a></em><br/></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Getting started with GCD in MacRuby &amp; Rubymotion]]></title>
+    <link href="http://seanlilmateus.github.com/blog/2012/05/31/getting-started-with-grand-central-dispatch-in-macruby-and-rubymotion/"/>
+    <updated>2012-05-31T18:03:00+02:00</updated>
+    <id>http://seanlilmateus.github.com/blog/2012/05/31/getting-started-with-grand-central-dispatch-in-macruby-and-rubymotion</id>
+    <content type="html"><![CDATA[<h1>Grand Central Dispatch</h1>
+
+<p>Grand Central Dispatch is the apple way to perform concurrent programming, by using it you're able to divide your program into peaces <em>tasks</em> that can be executed by a queue concurrently or serially. Since GCD is a low level C API, you can't communicate directly with it, but MacRuby has a wrapper for that.</p>
+
+<h3>What are Queues?</h3>
+
+<p>You can think of <em><strong>Dispatch::Queue</strong>s</em> as workers waiting to execute undefined tasks, the can either execute tasks concurrently or serially.
+A Serial Queue executes a single task at once, a concurrent queue is capable to execute as many tasks simultaneously as your system allow it execute.</p>
+
+<h2>Creating and Managing Queues:</h2>
+
+<p>GCD comes with three different types of queues:<br />
+1) <em><strong>The Main queue:</strong></em> the main queue is the application aka. main thread, you can get this queue by using:
+```ruby get the man queue</p>
+
+<pre><code>main_queue = Dispatch::Queue.main
+</code></pre>
+
+<p><code>
+2) *__Global / Concurrents queue:__* on pre Lion / iOS5 version of GCD there were only one concurrent queue that could have three defined priorities, but now this changed. You can create as much concurrent queues as you want that execute multiple blocks at the same time[¹](#one).
+</code>ruby Get / Create Concurrent queues</p>
+
+<pre><code># get the global concurrent queue on 10.6 OSX [priority can be :high, :low or :default]
+queue = Dispatch::Queue.concurrent(priority=:default)
+# On Lion or iOS5 
+queue = Dispatch::Queue.concurrent("com.company.application.tasks")
+</code></pre>
+
+<p><code>
+3) *__Customized queues:__* are lightweight list of blocks which can be executed one at a time in FIFO order, they can be compared with Ruby mutex or traditional ruby thread. They are perfectly suited for synchronization mechanism without have to deal with **lock** and **unlock**.[²](#two)
+If you want to ensure that tasks execute in a predictable order, you should use the customized queues.
+</code>ruby Create a custom Queue</p>
+
+<pre><code>queue = Dispatch::Queue.new("com.company.application.task")
+</code></pre>
+
+<p>```</p>
+
+<h2>Submitting blocks to queues:</h2>
+
+<p>There are two ways to submit a block to a queue, the first is the asynchronous execution, which submits a block to a queue and returns immediately. e.g:
+```ruby</p>
+
+<pre><code>queue = Dispatch::Queue.concurrent('com.company.app.task')
+queue.async { puts :hallo }
+</code></pre>
+
+<p><code>
+The second method is the **Dispatch::Queue#sync** which submits a block to a dispatch queue and waits until it completion. Unlike the **Dispatch::Queue#async** method, the block are synchronously executed. e.g:
+</code>ruby</p>
+
+<pre><code>queue = Dispatch::Queue.concurrent('com.company.app.task')
+queue.sync { puts :hallo }
+</code></pre>
+
+<p>```</p>
+
+<h4>Submitting blocks later:</h4>
+
+<p><strong>Dispatch::Queue#after</strong> submits a block asynchronously to the given queue after, but the block will not be executed until the given delay (in seconds) has past.
+```ruby</p>
+
+<pre><code>queue.after(0.5) { puts 'waiting for the world to change' }
+</code></pre>
+
+<p>```</p>
+
+<h4>Concurrently executing one block many times</h4>
+
+<p><strong>Dispatch::Queue#apply</strong> submits a block to a dispatch queue for multiple execution, if the execution queue is a concurrent, the block will be executed concurrently.
+``` ruby</p>
+
+<pre><code>queue = Dispatch::Queue.concurrent('com.company.app.task')
+@result = []
+queue.apply(5) {|idx| @result[idx] = idx*idx }
+p @result  #=&gt; [0, 1, 4, 9, 16]
+</code></pre>
+
+<p>```</p>
+
+<h3>Managing Dispatch Objects</h3>
+
+<p>Dispatch Objects allow to manage the blocks execution by canceling, suspend and resume it.</p>
+
+<h4>Suspending and resuming execution:</h4>
+
+<p>```ruby suspending and resuming execution</p>
+
+<pre><code>queue = Dispatch::Queue.new('com.company.app.task')
+queue.async { sleep 1; puts :hallo }
+queue.suspend!
+queue.suspended?
+queue.resume!
+</code></pre>
+
+<p>```</p>
+
+<h4>Getting the internal Queue Object:</h4>
+
+<p>Sometimes when dealing with Cocoa / CocoaTouch API's you will need to have access to the Queue object, for this purpose Macruby's GDC-Wrapper delievers a method to get the queue object: <em><strong>Dispatch::Queue#dispatch_object</strong></em></p>
+
+<h3>Dispatch Constants</h3>
+
+<p><em><strong>Dispatch::TIME_FOREVER</strong></em>: means infinity, queue or semaphore will wait till blocks are done <br />
+<em><strong> Dispatch::TIME_NOW</strong></em>: means zero, queue or semaphore will not wait for blocks at all<br /></p>
+
+<h1>Coming next</h1>
+
+<h3>Dispatch Barrier</h3>
+
+<h3>Dispatch Group</h3>
+
+<h3>Dispatch Semaphore</h3>
+
+<h3>Dispatch Source</h3>
+
+<h2><em>Recommendation:</em></h2>
+
+<p> <em>- <a href="http://macruby.macosforge.org/documentation/gcd.html">An Introduction to GCD with MacRuby by Patrick Thomson</a></em><br/>
+ <em>-<a href="http://www.mikeash.com/pyblog/friday-qa-2009-08-28-intro-to-grand-central-dispatch-part-i-basics-and-dispatch-queues.html">Intro to Grand Central Dispatch, Part I: Basics and Dispatch Queues by Mike Ash</a></em></p>
+
+<p> <div class="post-it">
+ <em id="one">¹ Concurrently executed blocks may complete out of order</em><br/>
+ <em id="two">² the queue names/labels are meant to help you debugging your application, and it should follow the reverse-DNS style convention</em>
+ </div></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Welcome Post]]></title>
+    <link href="http://seanlilmateus.github.com/blog/2012/04/29/welcome-post/"/>
+    <updated>2012-04-29T19:31:00+02:00</updated>
+    <id>http://seanlilmateus.github.com/blog/2012/04/29/welcome-post</id>
+    <content type="html"><![CDATA[<p>Welcome to my Mateus' Welt, from now on I'll post article and some MacRuby tricks.
+If you're interested on writing a guest post for this Blog, you're welcome!</p>
+]]></content>
+  </entry>
+  
+</feed>

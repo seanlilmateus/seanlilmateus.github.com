@@ -1,0 +1,11 @@
+<div class="highlight"><pre><span class="c1"># we create an semaphore with the number of resources available: 1</span>
+<span class="n">semaphore</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Semaphore</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Increment the counting semaphore. If the previous value was less than zero, </span>
+<span class="c1"># this function wakes a thread currently waiting in semaphore#wait</span>
+<span class="n">semaphore</span><span class="o">.</span><span class="n">signal</span>
+
+<span class="c1"># Decrement the counting semaphore. If the resulting value is less than zero, </span>
+<span class="c1"># this function waits in FIFO order for a signal to occur before returning.</span>
+<span class="n">semaphore</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">time</span><span class="p">)</span> <span class="c1"># time can be Dispatch::TIME_FOREVER or Dispatch::TIME_NOW </span>
+</pre></div>

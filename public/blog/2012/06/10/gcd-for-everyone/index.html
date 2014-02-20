@@ -1,0 +1,436 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>GCD for Everyone - Mateus - Welt</title>
+	<meta name="author" content="Mateus Armando">
+
+	
+	<meta name="description" content="GCD for Everyone This is the third part of a serie of four blog articles on how to use Grand Central Dispatch with Macruby and rubymotion, today I &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="Mateus - Welt" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://seanlilmateus.github.com/blog/2012/06/10/gcd-for-everyone/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	
+	<img src="http://www.gravatar.com/avatar/ada7e1cbace75a5d37a116bd2d20dbc3?s=160" alt="Profile Picture" style="width: 160px;" />
+	
+</div>
+<hgroup>
+  <h1><a href="/">Mateus - Welt</a></h1>
+  
+    <h2>Die Welt verstehen | Understand the world</h2>
+  
+</hgroup>
+
+<nav id="main-nav"><ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+			<a class="twitter" href="http://twitter.com/seanlilmateus" title="Twitter">Twitter</a>
+		
+		
+			<a class="github" href="https://github.com/seanlilmateus" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+			<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+<div id="banner" class="inner">
+	<div class="container">
+		<ul class="feed"></ul>
+	</div>
+	<small><a href="http://twitter.com/seanlilmateus">seanlilmateus</a> @ <a href="http://twitter.com">Twitter</a></small>
+	<div class="loading">Loading...</div>
+</div>
+<script src="/javascripts/twitter.js"></script>
+<script type="text/javascript">
+	(function($){
+		$('#banner').getTwitterFeed('seanlilmateus', 2, false);
+	})(jQuery);
+</script>
+
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">GCD for Everyone</h1>
+	<div class="entry-content" itemprop="articleBody"><p>This is the third part of a serie of four blog articles on how to use Grand Central Dispatch with Macruby and rubymotion, today I want to Introduce you to tDispatch Semaphores.</p>
+
+<h2>Understanding and using Dispatch Semaphores</h2>
+
+<p>Dispatch semaphore is GCD’s implementations of traditional counting semaphore not to be confused whit Ruby’s Mutex which only implements a simple semaphore lock but also allows coordinated access to shared data from multiple Threads. Traditional semaphores always require calling down to the kernel to test the semaphore, but the dispatch semaphore tests semaphore in user space, and only traps into the kernel when the test fails and needs to block the thread, this makes Dispatch Semaphore efficient and lightweight.</p>
+
+<p>A Dispatch Semaphore object on mainly responds to two methods:</p>
+
+<pre><code>- semaphore#signal
+- semaphore#wait()
+</code></pre>
+
+<p>*-When a semaphore is signaled, the counter is incremented. When the thread waits in a semaphore, it will block, if necessary until is greater than 0 and then decrement the count.</p>
+
+<p>Let&#8217;s look into some code for better understanding:
+On This example I&#8217;ll try to solve the &#8221;<strong>The Dining Philosophers Problem</strong>&#8221; which is an example problem often used in concurrent algorithm design to illustrate synchronization issues and techniques for resolving them.</p>
+
+<h2>The Problem</h2>
+
+<p>The dining philosophers problem is invented by E. W. Dijkstra. Imagine that five philosophers who spend their lives just thinking and easting. In the middle of the dining room is a circular table with five chairs. The table has a big plate of spaghetti. However, there are only five chopsticks available, as shown in the following figure. Each philosopher thinks. When he gets hungry, he sits down and picks up the two chopsticks that are closest to him. If a philosopher can pick up both chopsticks, he eats for a while. when a philosopher finishes eating, he puts down the chopsticks and starts to think <a href="http://www.cs.mtu.edu/~shene/NSF-3/e-Book/SEMA/TM-example-philos-4chairs.html">more information</a>.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Philosopher</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="n">left_chopstick</span><span class="p">,</span> <span class="n">right_chopstick</span><span class="p">)</span>
+</span><span class='line'>    <span class="vi">@name</span> <span class="o">=</span> <span class="nb">name</span>
+</span><span class='line'>    <span class="vi">@left_chopstick</span> <span class="o">=</span> <span class="n">left_chopstick</span>
+</span><span class='line'>    <span class="vi">@right_chopstick</span> <span class="o">=</span> <span class="n">right_chopstick</span>
+</span><span class='line'>    <span class="vi">@meals</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">run</span>
+</span><span class='line'>    <span class="k">while</span> <span class="vi">@meals</span> <span class="o">&lt;</span> <span class="mi">5</span>
+</span><span class='line'>      <span class="n">think</span>
+</span><span class='line'>      <span class="n">dine</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>    <span class="nb">puts</span> <span class="s2">&quot;philosopher: </span><span class="si">#@name</span><span class="s2"> is full!&quot;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">think</span>
+</span><span class='line'>    <span class="nb">puts</span> <span class="s2">&quot;philosopher: </span><span class="si">#@name</span><span class="s2"> is thinking...&quot;</span>
+</span><span class='line'>    <span class="nb">sleep</span><span class="p">(</span><span class="nb">rand</span><span class="p">())</span>
+</span><span class='line'>    <span class="nb">puts</span> <span class="s2">&quot;philosopher: </span><span class="si">#@name</span><span class="s2"> is hungry...&quot;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">dine</span>
+</span><span class='line'>    <span class="n">chopstick1</span><span class="p">,</span> <span class="n">chopstick2</span> <span class="o">=</span> <span class="vi">@left_chopstick</span><span class="p">,</span> <span class="vi">@right_chopstick</span>
+</span><span class='line'>    <span class="k">while</span> <span class="kp">true</span>
+</span><span class='line'>      <span class="n">pickup</span><span class="p">(</span><span class="n">chopstick1</span><span class="p">,</span> <span class="ss">:wait</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">)</span>
+</span><span class='line'>      <span class="nb">puts</span> <span class="s2">&quot;philosopher: </span><span class="si">#@name</span><span class="s2"> has chopstick </span><span class="si">#{</span><span class="n">chopstick1</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">...&quot;</span>
+</span><span class='line'>      <span class="k">break</span> <span class="k">if</span> <span class="n">pickup</span><span class="p">(</span><span class="n">chopstick2</span><span class="p">,</span> <span class="ss">:wait</span> <span class="o">=&gt;</span> <span class="kp">false</span><span class="p">)</span>
+</span><span class='line'>      <span class="nb">puts</span> <span class="s2">&quot;philosopher: </span><span class="si">#@name</span><span class="s2"> cannot pickup second chopstick </span><span class="si">#{</span><span class="n">chopstick2</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">...&quot;</span>
+</span><span class='line'>      <span class="n">release</span><span class="p">(</span><span class="n">chopstick1</span><span class="p">)</span>
+</span><span class='line'>      <span class="n">chopstick1</span><span class="p">,</span> <span class="n">chopstick2</span> <span class="o">=</span> <span class="n">chopstick2</span><span class="p">,</span> <span class="n">chopstick1</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>    <span class="nb">puts</span> <span class="s2">&quot;philosopher: </span><span class="si">#@name</span><span class="s2"> has the second chopstick </span><span class="si">#{</span><span class="n">chopstick2</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">...&quot;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nb">puts</span> <span class="s2">&quot;philosopher: </span><span class="si">#@name</span><span class="s2"> eats...&quot;</span>
+</span><span class='line'>    <span class="nb">sleep</span><span class="p">(</span><span class="nb">rand</span><span class="p">())</span>
+</span><span class='line'>    <span class="nb">puts</span> <span class="s2">&quot;philosopher: </span><span class="si">#@name</span><span class="s2"> belches&quot;</span>
+</span><span class='line'>    <span class="vi">@meals</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">release</span><span class="p">(</span><span class="vi">@left_chopstick</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">release</span><span class="p">(</span><span class="vi">@right_chopstick</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">pickup</span><span class="p">(</span><span class="n">chopstick</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
+</span><span class='line'>    <span class="nb">puts</span> <span class="s2">&quot;philosopher: </span><span class="si">#@name</span><span class="s2"> attempts to pickup chopstick </span><span class="si">#{</span><span class="n">chopstick</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">...&quot;</span>
+</span><span class='line'>    <span class="n">chopstick</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">release</span><span class="p">(</span><span class="n">chopstick</span><span class="p">)</span>
+</span><span class='line'>    <span class="nb">puts</span> <span class="s2">&quot;philosopher: </span><span class="si">#@name</span><span class="s2"> releases chopstick </span><span class="si">#{</span><span class="n">chopstick</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">...&quot;</span>
+</span><span class='line'>    <span class="n">chopstick</span><span class="o">.</span><span class="n">release</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># we just wrappe the semaphores</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">Chopstick</span> <span class="o">&lt;</span> <span class="no">Struct</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:id</span><span class="p">,</span> <span class="ss">:semaphore</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">release</span>
+</span><span class='line'>    <span class="n">semaphore</span><span class="o">.</span><span class="n">signal</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">wait</span><span class="p">(</span><span class="n">opt</span><span class="o">=</span><span class="p">{})</span>
+</span><span class='line'>    <span class="n">semaphore</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">opt</span><span class="o">[</span><span class="ss">:wait</span><span class="o">]</span> <span class="p">?</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:TIME_FOREVER</span> <span class="p">:</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:TIME_NOW</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="n">philosophers</span> <span class="o">=</span> <span class="sx">%W{Aristotle Kant Spinoza Marx Russell}</span>
+</span><span class='line'><span class="n">size</span> <span class="o">=</span> <span class="n">philosophers</span><span class="o">.</span><span class="n">length</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">chopsticks</span> <span class="o">=</span> <span class="nb">Array</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">size</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="no">Chopstick</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Semaphore</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="p">}</span>
+</span><span class='line'><span class="n">queue</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">concurrent</span><span class="p">(</span><span class="s2">&quot;de.mateus.philosophers.problem&quot;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">group</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Group</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">philosophers</span><span class="o">.</span><span class="n">each_with_index</span> <span class="k">do</span> <span class="o">|</span><span class="nb">name</span><span class="p">,</span> <span class="n">idx</span><span class="o">|</span>
+</span><span class='line'>  <span class="n">queue</span><span class="o">.</span><span class="n">async</span><span class="p">(</span><span class="n">group</span><span class="p">)</span> <span class="k">do</span>
+</span><span class='line'>    <span class="n">cs1</span> <span class="o">=</span> <span class="n">chopsticks</span><span class="o">[</span><span class="n">idx</span><span class="o">]</span>
+</span><span class='line'>    <span class="n">cs2</span> <span class="o">=</span> <span class="n">chopsticks</span><span class="o">[</span><span class="p">(</span><span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">%</span><span class="n">size</span><span class="o">]</span>
+</span><span class='line'>    <span class="no">Philosopher</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="n">cs1</span><span class="p">,</span> <span class="n">cs2</span><span class="p">)</span><span class="o">.</span><span class="n">run</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># since we want to see the out put, he have to wait till all the dispatch tasks are done</span>
+</span><span class='line'><span class="n">group</span><span class="o">.</span><span class="n">wait</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>`</p>
+
+<p>On this example the Chopsticks are our Infinite resource each philosopher has one, but to eat he needs two, whenever a philosopher picks a chopsticks he send a wait, and when he is done the send a signal to wake the others waiting for the chopsticks.</p>
+
+<p>Let&#8217;s take a look into how semaphores really work:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># we create an semaphore with the number of resources available: 1</span>
+</span><span class='line'><span class="n">semaphore</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Semaphore</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># Increment the counting semaphore. If the previous value was less than zero, </span>
+</span><span class='line'><span class="c1"># this function wakes a thread currently waiting in semaphore#wait</span>
+</span><span class='line'><span class="n">semaphore</span><span class="o">.</span><span class="n">signal</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># Decrement the counting semaphore. If the resulting value is less than zero, </span>
+</span><span class='line'><span class="c1"># this function waits in FIFO order for a signal to occur before returning.</span>
+</span><span class='line'><span class="n">semaphore</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">time</span><span class="p">)</span> <span class="c1"># time can be Dispatch::TIME_FOREVER or Dispatch::TIME_NOW </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Another example sleeping barber problem</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1">#!/usr/bin/env macruby -wKU</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># A GCD-based implementation of the sleeping barber problem:</span>
+</span><span class='line'><span class="c1">#   http://en.wikipedia.org/wiki/Sleeping_barber_problem</span>
+</span><span class='line'><span class="c1">#   http://www.madebysofa.com/#blog/the_sleeping_barber</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="n">waiting_chairs</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;com.apple.waiting_chairs&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">semaphore</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Semaphore</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</span><span class='line'><span class="n">index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+</span><span class='line'><span class="k">while</span> <span class="kp">true</span>
+</span><span class='line'>  <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class='line'>  <span class="n">success</span> <span class="o">=</span> <span class="n">semaphore</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:TIME_NOW</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">if</span> <span class="n">success</span> <span class="o">!=</span> <span class="mi">0</span>
+</span><span class='line'>    <span class="nb">puts</span> <span class="s2">&quot;Customer turned away </span><span class="si">#{</span><span class="n">index</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span class='line'>    <span class="k">next</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="n">waiting_chairs</span><span class="o">.</span><span class="n">async</span> <span class="k">do</span>
+</span><span class='line'>    <span class="n">semaphore</span><span class="o">.</span><span class="n">signal</span>
+</span><span class='line'>    <span class="nb">puts</span> <span class="s2">&quot;Shave and a haircut </span><span class="si">#{</span><span class="n">index</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As you can see, Dispatch Semaphore is great way to control limited resource, this are basically the fundamental usage of dispatch semaphore. On the last blog post of this serie I’ll show the principles of Dispatch Source.</p>
+
+<h1>Coming next</h1>
+
+<h3>Dispatch Source</h3>
+
+<h2><em>Recommendation:</em></h2>
+
+<p> <em>- <a href="http://developer.apple.com/library/ios/#documentation/General/Conceptual/ConcurrencyProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40008091-CH1-SW1">Apple&#8217;s Concurrency Programming Guide</a></em><br/></p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+</div>
+			</div>
+			<footer id="footer" class="inner"><p>
+  Copyright &copy; 2014 - Mateus Armando -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+			
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+		</div>
+	</div>
+</body>
+</html>

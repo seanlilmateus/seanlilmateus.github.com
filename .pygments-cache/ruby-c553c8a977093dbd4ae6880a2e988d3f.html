@@ -1,0 +1,23 @@
+<div class="highlight"><pre><span class="c1">#!/usr/bin/env macruby -wKU</span>
+ 
+<span class="c1"># A GCD-based implementation of the sleeping barber problem:</span>
+<span class="c1">#   http://en.wikipedia.org/wiki/Sleeping_barber_problem</span>
+<span class="c1">#   http://www.madebysofa.com/#blog/the_sleeping_barber</span>
+ 
+ 
+<span class="n">waiting_chairs</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;com.apple.waiting_chairs&#39;</span><span class="p">)</span>
+<span class="n">semaphore</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Semaphore</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+<span class="k">while</span> <span class="kp">true</span>
+  <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+  <span class="n">success</span> <span class="o">=</span> <span class="n">semaphore</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:TIME_NOW</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">success</span> <span class="o">!=</span> <span class="mi">0</span>
+    <span class="nb">puts</span> <span class="s2">&quot;Customer turned away </span><span class="si">#{</span><span class="n">index</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">next</span>
+  <span class="k">end</span>
+  <span class="n">waiting_chairs</span><span class="o">.</span><span class="n">async</span> <span class="k">do</span>
+    <span class="n">semaphore</span><span class="o">.</span><span class="n">signal</span>
+    <span class="nb">puts</span> <span class="s2">&quot;Shave and a haircut </span><span class="si">#{</span><span class="n">index</span><span class="si">}</span><span class="s2">&quot;</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre></div>

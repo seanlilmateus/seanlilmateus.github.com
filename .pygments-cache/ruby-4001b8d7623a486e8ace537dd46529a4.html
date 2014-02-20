@@ -1,0 +1,11 @@
+<div class="highlight"><pre><span class="c1"># Monitoring the death of a process</span>
+<span class="n">queue</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Proc&#39;</span><span class="p">)</span>
+<span class="n">itunes</span> <span class="o">=</span> <span class="no">NSRunningApplication</span><span class="o">.</span><span class="n">runningApplicationsWithBundleIdentifier</span> <span class="s1">&#39;com.apple.iTunes&#39;</span>
+<span class="k">return</span> <span class="k">if</span> <span class="n">itunes</span><span class="o">.</span><span class="n">empty?</span>
+<span class="n">pid</span> <span class="o">=</span> <span class="n">itunes</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">processIdentifier</span>
+<span class="n">opts</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Source</span><span class="o">::</span><span class="no">PROC_EXIT</span>
+ <span class="c1"># will observe safari, whenever it quits the action block will be called</span>
+<span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Source</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Source</span><span class="o">::</span><span class="no">PROC</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">opts</span><span class="p">,</span> <span class="n">queue</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">src</span><span class="o">|</span>
+	<span class="no">NSLog</span><span class="p">(</span><span class="s2">&quot;%@, iTunes quit&quot;</span><span class="p">,</span> <span class="n">src</span><span class="o">.</span><span class="n">mask</span><span class="p">)</span> <span class="c1"># 2147483648, iTunes quit</span>
+<span class="k">end</span>
+</pre></div>

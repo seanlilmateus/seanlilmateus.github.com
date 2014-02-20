@@ -1,0 +1,5 @@
+<div class="highlight"><pre><span class="n">queue</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">new</span> <span class="s1">&#39;example.timer&#39;</span>
+<span class="n">timer</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Source</span><span class="o">.</span><span class="n">timer</span><span class="p">(</span><span class="mi">0</span><span class="o">.</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="o">.</span><span class="mi">5</span><span class="p">,</span> <span class="n">queue</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">s</span><span class="o">|</span>
+  <span class="nb">puts</span> <span class="s2">&quot;Wake up!&quot;</span>
+<span class="k">end</span>
+</pre></div>

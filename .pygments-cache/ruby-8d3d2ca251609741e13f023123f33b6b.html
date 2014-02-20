@@ -1,0 +1,86 @@
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">Philosopher</span>
+  
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="n">left_chopstick</span><span class="p">,</span> <span class="n">right_chopstick</span><span class="p">)</span>
+    <span class="vi">@name</span> <span class="o">=</span> <span class="nb">name</span>
+    <span class="vi">@left_chopstick</span> <span class="o">=</span> <span class="n">left_chopstick</span>
+    <span class="vi">@right_chopstick</span> <span class="o">=</span> <span class="n">right_chopstick</span>
+    <span class="vi">@meals</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="k">end</span>
+ 
+  <span class="k">def</span> <span class="nf">run</span>
+    <span class="k">while</span> <span class="vi">@meals</span> <span class="o">&lt;</span> <span class="mi">5</span>
+      <span class="n">think</span>
+      <span class="n">dine</span>
+    <span class="k">end</span>
+    <span class="nb">puts</span> <span class="s2">&quot;philosopher: </span><span class="si">#@name</span><span class="s2"> is full!&quot;</span>
+  <span class="k">end</span>
+ 
+  <span class="k">def</span> <span class="nf">think</span>
+    <span class="nb">puts</span> <span class="s2">&quot;philosopher: </span><span class="si">#@name</span><span class="s2"> is thinking...&quot;</span>
+    <span class="nb">sleep</span><span class="p">(</span><span class="nb">rand</span><span class="p">())</span>
+    <span class="nb">puts</span> <span class="s2">&quot;philosopher: </span><span class="si">#@name</span><span class="s2"> is hungry...&quot;</span>
+  <span class="k">end</span>
+ 
+  <span class="k">def</span> <span class="nf">dine</span>
+    <span class="n">chopstick1</span><span class="p">,</span> <span class="n">chopstick2</span> <span class="o">=</span> <span class="vi">@left_chopstick</span><span class="p">,</span> <span class="vi">@right_chopstick</span>
+    <span class="k">while</span> <span class="kp">true</span>
+      <span class="n">pickup</span><span class="p">(</span><span class="n">chopstick1</span><span class="p">,</span> <span class="ss">:wait</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">)</span>
+      <span class="nb">puts</span> <span class="s2">&quot;philosopher: </span><span class="si">#@name</span><span class="s2"> has chopstick </span><span class="si">#{</span><span class="n">chopstick1</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">...&quot;</span>
+      <span class="k">break</span> <span class="k">if</span> <span class="n">pickup</span><span class="p">(</span><span class="n">chopstick2</span><span class="p">,</span> <span class="ss">:wait</span> <span class="o">=&gt;</span> <span class="kp">false</span><span class="p">)</span>
+      <span class="nb">puts</span> <span class="s2">&quot;philosopher: </span><span class="si">#@name</span><span class="s2"> cannot pickup second chopstick </span><span class="si">#{</span><span class="n">chopstick2</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">...&quot;</span>
+      <span class="n">release</span><span class="p">(</span><span class="n">chopstick1</span><span class="p">)</span>
+      <span class="n">chopstick1</span><span class="p">,</span> <span class="n">chopstick2</span> <span class="o">=</span> <span class="n">chopstick2</span><span class="p">,</span> <span class="n">chopstick1</span>
+    <span class="k">end</span>
+    <span class="nb">puts</span> <span class="s2">&quot;philosopher: </span><span class="si">#@name</span><span class="s2"> has the second chopstick </span><span class="si">#{</span><span class="n">chopstick2</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">...&quot;</span>
+ 
+    <span class="nb">puts</span> <span class="s2">&quot;philosopher: </span><span class="si">#@name</span><span class="s2"> eats...&quot;</span>
+    <span class="nb">sleep</span><span class="p">(</span><span class="nb">rand</span><span class="p">())</span>
+    <span class="nb">puts</span> <span class="s2">&quot;philosopher: </span><span class="si">#@name</span><span class="s2"> belches&quot;</span>
+    <span class="vi">@meals</span> <span class="o">+=</span> <span class="mi">1</span>
+ 
+    <span class="n">release</span><span class="p">(</span><span class="vi">@left_chopstick</span><span class="p">)</span>
+    <span class="n">release</span><span class="p">(</span><span class="vi">@right_chopstick</span><span class="p">)</span>
+  <span class="k">end</span>
+ 
+  <span class="k">def</span> <span class="nf">pickup</span><span class="p">(</span><span class="n">chopstick</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
+    <span class="nb">puts</span> <span class="s2">&quot;philosopher: </span><span class="si">#@name</span><span class="s2"> attempts to pickup chopstick </span><span class="si">#{</span><span class="n">chopstick</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">...&quot;</span>
+    <span class="n">chopstick</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span>
+  <span class="k">end</span>
+ 
+  <span class="k">def</span> <span class="nf">release</span><span class="p">(</span><span class="n">chopstick</span><span class="p">)</span>
+    <span class="nb">puts</span> <span class="s2">&quot;philosopher: </span><span class="si">#@name</span><span class="s2"> releases chopstick </span><span class="si">#{</span><span class="n">chopstick</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">...&quot;</span>
+    <span class="n">chopstick</span><span class="o">.</span><span class="n">release</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+ 
+<span class="c1"># we just wrappe the semaphores</span>
+<span class="k">class</span> <span class="nc">Chopstick</span> <span class="o">&lt;</span> <span class="no">Struct</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:id</span><span class="p">,</span> <span class="ss">:semaphore</span><span class="p">)</span>
+  <span class="k">def</span> <span class="nf">release</span>
+    <span class="n">semaphore</span><span class="o">.</span><span class="n">signal</span>
+  <span class="k">end</span>
+  
+  <span class="k">def</span> <span class="nf">wait</span><span class="p">(</span><span class="n">opt</span><span class="o">=</span><span class="p">{})</span>
+    <span class="n">semaphore</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">opt</span><span class="o">[</span><span class="ss">:wait</span><span class="o">]</span> <span class="p">?</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:TIME_FOREVER</span> <span class="p">:</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:TIME_NOW</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+ 
+ 
+<span class="n">philosophers</span> <span class="o">=</span> <span class="sx">%W{Aristotle Kant Spinoza Marx Russell}</span>
+<span class="n">size</span> <span class="o">=</span> <span class="n">philosophers</span><span class="o">.</span><span class="n">length</span>
+ 
+<span class="n">chopsticks</span> <span class="o">=</span> <span class="nb">Array</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">size</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="no">Chopstick</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Semaphore</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="p">}</span>
+<span class="n">queue</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">concurrent</span><span class="p">(</span><span class="s2">&quot;de.mateus.philosophers.problem&quot;</span><span class="p">)</span>
+ 
+<span class="n">group</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Group</span><span class="o">.</span><span class="n">new</span>
+ 
+<span class="n">philosophers</span><span class="o">.</span><span class="n">each_with_index</span> <span class="k">do</span> <span class="o">|</span><span class="nb">name</span><span class="p">,</span> <span class="n">idx</span><span class="o">|</span>
+  <span class="n">queue</span><span class="o">.</span><span class="n">async</span><span class="p">(</span><span class="n">group</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">cs1</span> <span class="o">=</span> <span class="n">chopsticks</span><span class="o">[</span><span class="n">idx</span><span class="o">]</span>
+    <span class="n">cs2</span> <span class="o">=</span> <span class="n">chopsticks</span><span class="o">[</span><span class="p">(</span><span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">%</span><span class="n">size</span><span class="o">]</span>
+    <span class="no">Philosopher</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="n">cs1</span><span class="p">,</span> <span class="n">cs2</span><span class="p">)</span><span class="o">.</span><span class="n">run</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+ 
+<span class="c1"># since we want to see the out put, he have to wait till all the dispatch tasks are done</span>
+<span class="n">group</span><span class="o">.</span><span class="n">wait</span>
+</pre></div>

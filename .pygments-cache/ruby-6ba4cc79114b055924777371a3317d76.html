@@ -1,0 +1,16 @@
+<div class="highlight"><pre><span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;PATH/hello.txt&#39;</span>
+<span class="n">filename</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="ss">File</span><span class="p">:</span><span class="ss">:WRONLY</span><span class="o">|</span><span class="ss">File</span><span class="p">:</span><span class="ss">:CREAT</span><span class="o">|</span><span class="ss">File</span><span class="p">:</span><span class="ss">:TRUNC</span><span class="p">,</span> <span class="mo">0644</span><span class="p">)</span>
+<span class="vi">@msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="vg">$$</span><span class="si">}</span><span class="s2">: </span><span class="si">#{</span><span class="no">Time</span><span class="o">.</span><span class="n">now</span><span class="si">}</span><span class="s2"> queue%s&quot;</span>
+<span class="vi">@pos</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">writer</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Source</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Source</span><span class="o">::</span><span class="no">WRITE</span><span class="p">,</span> <span class="n">fd</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">queue</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">src</span><span class="o">|</span>
+  <span class="n">file</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">handle</span>
+  <span class="k">begin</span>
+    <span class="n">npos</span> <span class="o">=</span> <span class="vi">@pos</span> <span class="o">+</span> <span class="n">src</span><span class="o">.</span><span class="n">data</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="vi">@msg</span> <span class="o">%</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">current</span>
+    <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="n">msg</span><span class="o">[</span><span class="vi">@pos</span><span class="o">.</span><span class="n">.npos</span><span class="o">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># ideally should write_nonblock</span>
+    <span class="vi">@pos</span> <span class="o">=</span> <span class="n">npos</span> <span class="o">+</span> <span class="mi">1</span>
+  <span class="k">rescue</span> <span class="no">Exception</span> <span class="o">=&gt;</span> <span class="n">error</span>
+    <span class="nb">puts</span> <span class="n">error</span>
+  <span class="k">end</span>  
+<span class="k">end</span>
+</pre></div>

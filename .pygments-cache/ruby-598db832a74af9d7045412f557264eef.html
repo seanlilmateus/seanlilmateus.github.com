@@ -1,0 +1,30 @@
+<div class="highlight"><pre><span class="n">group</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Group</span><span class="o">.</span><span class="n">new</span>
+<span class="n">derpina_queue</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">concurrent</span><span class="p">(</span><span class="ss">:high</span><span class="p">)</span>   <span class="c1">#Dispatch::Queue.concurrent(&quot;com.company.movie_night.get_wine&quot;)</span>
+ 
+<span class="n">derp_queue</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">concurrent</span><span class="p">(</span><span class="ss">:default</span><span class="p">)</span>   <span class="c1">#Dispatch::Queue.concurrent(&quot;com.company.movie_night.get_popcorn&quot;)</span>
+ 
+<span class="n">derpina_queue</span><span class="o">.</span><span class="n">async</span><span class="p">(</span><span class="n">group</span><span class="p">)</span> <span class="k">do</span>
+  <span class="nb">puts</span> <span class="s2">&quot;go to wine cellar to get some Bordeaux&quot;</span> 
+  <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">99</span>
+    <span class="nb">puts</span> <span class="s2">&quot;can&#39;t decide which one to drink&quot;</span>
+    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+<span class="n">group</span><span class="o">.</span><span class="n">notify</span><span class="p">(</span><span class="n">derpina_queue</span><span class="p">)</span> <span class="p">{</span> <span class="nb">warn</span> <span class="s2">&quot;Derpina is back :-)&quot;</span> <span class="p">}</span>
+ 
+<span class="n">derp_queue</span><span class="o">.</span><span class="n">async</span><span class="p">(</span><span class="n">group</span><span class="p">)</span> <span class="k">do</span>
+  <span class="nb">puts</span> <span class="s2">&quot;go to the kitchen pick some popcorn&quot;</span>
+  <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">9999</span>
+    <span class="nb">puts</span> <span class="s2">&quot;damn, I have to make new one&quot;</span>
+    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+<span class="n">group</span><span class="o">.</span><span class="n">notify</span><span class="p">(</span><span class="n">derp_queue</span><span class="p">)</span> <span class="p">{</span> <span class="nb">warn</span> <span class="s2">&quot;Derp is back :-)&quot;</span> <span class="p">}</span>
+ 
+<span class="n">group</span><span class="o">.</span><span class="n">wait</span>
+<span class="nb">puts</span> <span class="s2">&quot;both are back, let&#39;s watch the movie&quot;</span>
+ 
+<span class="n">movie</span><span class="o">.</span><span class="n">play</span>
+</pre></div>

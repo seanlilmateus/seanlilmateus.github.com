@@ -1,0 +1,11 @@
+<div class="highlight"><pre><span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;PATH/file2read.txt&#39;</span>
+<span class="vi">@result</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="n">read_queue</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">new</span> <span class="s2">&quot;read source queue&quot;</span>
+<span class="vi">@src</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Source</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Source</span><span class="o">::</span><span class="no">READ</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">read_queue</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">src</span><span class="o">|</span>
+<span class="k">begin</span>
+    <span class="vi">@result</span> <span class="o">&lt;&lt;</span> <span class="vi">@file</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="c1"># ideally should read_nonblock</span>
+ <span class="k">rescue</span> <span class="no">Exception</span> <span class="o">=&gt;</span> <span class="n">error</span>
+    <span class="nb">puts</span> <span class="n">error</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre></div>

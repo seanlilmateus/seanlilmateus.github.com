@@ -1,0 +1,40 @@
+<div class="highlight"><pre><span class="c1"># first of all we need an hash with our views and the name that we want to use tho refer them </span>
+<span class="n">views_dict</span> <span class="o">=</span> <span class="p">{</span> 
+	<span class="s2">&quot;title_label&quot;</span> <span class="o">=&gt;</span> <span class="vi">@title_label</span><span class="p">,</span> 
+	<span class="s2">&quot;subtitle_label&quot;</span> <span class="o">=&gt;</span> <span class="vi">@subtitle_label</span><span class="p">,</span> 
+	<span class="s2">&quot;button_action&quot;</span> <span class="o">=&gt;</span> <span class="vi">@button_action</span><span class="p">,</span> 
+	<span class="s2">&quot;text_field&quot;</span> <span class="o">=&gt;</span> <span class="vi">@text_field</span><span class="p">,</span> 
+	<span class="s2">&quot;info_label&quot;</span> <span class="o">=&gt;</span> <span class="vi">@info_label</span> 
+<span class="p">}</span>
+<span class="c1"># we create two constraints: </span>
+<span class="c1"># First row with the title_label</span>
+<span class="n">constraints</span> <span class="o">=</span> <span class="no">NSLayoutConstraint</span><span class="o">.</span><span class="n">constraintsWithVisualFormat</span><span class="p">(</span><span class="s2">&quot;H:|-[title_label]-|&quot;</span><span class="p">,</span> 
+                                                    <span class="ss">options</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> 
+                                                    <span class="ss">metrics</span><span class="p">:</span> <span class="kp">nil</span><span class="p">,</span> 
+                                                      <span class="ss">views</span><span class="p">:</span> <span class="n">views_dict</span><span class="p">)</span>
+<span class="nb">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">addConstraints</span><span class="p">(</span><span class="n">constraints</span><span class="p">)</span>
+<span class="c1"># second row with the subtitle_label</span>
+<span class="nb">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">addConstraints</span><span class="p">(</span><span class="no">NSLayoutConstraint</span><span class="o">.</span><span class="n">constraintsWithVisualFormat</span><span class="p">(</span><span class="s2">&quot;H:|-[subtitle_label]-|&quot;</span><span class="p">,</span> 
+                                                                <span class="ss">options</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> 
+                                                                <span class="ss">metrics</span><span class="p">:</span> <span class="kp">nil</span><span class="p">,</span> 
+                                                                  <span class="ss">views</span><span class="p">:</span> <span class="n">views_dict</span><span class="p">))</span>
+<span class="c1"># third row with an infolabel centered</span>
+<span class="nb">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">addConstraints</span><span class="p">(</span><span class="no">NSLayoutConstraint</span><span class="o">.</span><span class="n">constraintsWithVisualFormat</span><span class="p">(</span><span class="s2">&quot;H:|-[info_label]-|&quot;</span><span class="p">,</span> 
+																<span class="ss">options</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> 
+																<span class="ss">metrics</span><span class="p">:</span> <span class="kp">nil</span><span class="p">,</span> 
+																<span class="ss">views</span><span class="p">:</span> <span class="n">views_dict</span><span class="p">))</span>
+
+<span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;width&quot;</span> <span class="o">=&gt;</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;height&quot;</span><span class="o">=&gt;</span> <span class="mi">80</span> <span class="p">}</span>
+<span class="nb">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">addConstraints</span><span class="p">(</span><span class="no">NSLayoutConstraint</span><span class="o">.</span><span class="n">constraintsWithVisualFormat</span><span class="p">(</span><span class="s2">&quot;V:[info_label(==height@1000)]-5-|&quot;</span><span class="p">,</span> 
+                                                                  <span class="ss">options</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="c1">#  </span>
+                                                                  <span class="ss">metrics</span><span class="p">:</span> <span class="n">metrics</span><span class="p">,</span> 
+                                                                    <span class="ss">views</span><span class="p">:</span> <span class="n">views_dict</span><span class="p">))</span>
+<span class="c1"># @button_action.width == 0.5 * @text_field.width + 0</span>
+<span class="nb">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">addConstraint</span><span class="p">(</span><span class="no">NSLayoutConstraint</span><span class="o">.</span><span class="n">constraintWithItem</span><span class="p">(</span><span class="vi">@button_action</span><span class="p">,</span>
+                                                    <span class="ss">attribute</span><span class="p">:</span> <span class="no">NSLayoutAttributeWidth</span><span class="p">,</span>
+                                                    <span class="ss">relatedBy</span><span class="p">:</span> <span class="no">NSLayoutRelationEqual</span><span class="p">,</span>
+                                                       <span class="ss">toItem</span><span class="p">:</span> <span class="vi">@text_field</span><span class="p">,</span>
+                                                    <span class="ss">attribute</span><span class="p">:</span> <span class="no">NSLayoutAttributeWidth</span><span class="p">,</span>
+                                                   <span class="ss">multiplier</span><span class="p">:</span> <span class="mi">0</span><span class="o">.</span><span class="mi">5</span><span class="p">,</span>
+                                                     <span class="ss">constant</span><span class="p">:</span> <span class="mi">0</span><span class="p">))</span>
+</pre></div>

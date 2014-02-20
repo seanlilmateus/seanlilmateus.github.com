@@ -1,0 +1,1532 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Mateus - Welt</title>
+	<meta name="author" content="Mateus Armando">
+
+	
+	<meta name="description" content="Dec 30th, 2013 GCD Episode III: Return of the Dispatch Source Today we will divy into dispatch source, first of all let&#8217;s specify what Dipatch &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="Mateus - Welt" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://seanlilmateus.github.com/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	
+	<img src="http://www.gravatar.com/avatar/ada7e1cbace75a5d37a116bd2d20dbc3?s=160" alt="Profile Picture" style="width: 160px;" />
+	
+</div>
+<hgroup>
+  <h1><a href="/">Mateus - Welt</a></h1>
+  
+    <h2>Die Welt verstehen | Understand the world</h2>
+  
+</hgroup>
+
+<nav id="main-nav"><ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+		
+		
+		
+			<a class="twitter" href="http://twitter.com/seanlilmateus" title="Twitter">Twitter</a>
+		
+		
+			<a class="github" href="https://github.com/seanlilmateus" title="GitHub">GitHub</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+			<a class="rss" href="/atom.xml" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+<div id="banner" class="inner">
+	<div class="container">
+		<ul class="feed"></ul>
+	</div>
+	<small><a href="http://twitter.com/seanlilmateus">seanlilmateus</a> @ <a href="http://twitter.com">Twitter</a></small>
+	<div class="loading">Loading...</div>
+</div>
+<script src="/javascripts/twitter.js"></script>
+<script type="text/javascript">
+	(function($){
+		$('#banner').getTwitterFeed('seanlilmateus', 2, false);
+	})(jQuery);
+</script>
+
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner">
+<div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-12-30T23:03:00+01:00" data-updated="true" itemprop="datePublished">Dec 30<span>th</span>, 2013</time></div>
+		<div class="tags">
+
+</div>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2013/12/30/gcd-episode-iii-return-of-the-dispatch-source/" itemprop="url">GCD Episode III: Return of the Dispatch Source</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<p>Today we will divy into <a href="https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man3/dispatch_source_create.3.html">dispatch source</a>, first of all let&#8217;s specify what <a href="https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man3/dispatch_source_create.3.html">Dipatch::Source</a> stands for. A <a href="https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man3/dispatch_source_create.3.html">dispatch source</a> is a <a href="https://developer.apple.com/library/mac/documentation/Performance/Reference/GCD_libdispatch_Ref/Reference/reference.html">Grand Central Dispatch (GCD)</a> data structure that you create to process system-related events.</p>
+
+<h4>In Other Words:</h4>
+
+<p><a href="https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man3/dispatch_source_create.3.html">Dispatch::Source</a> are used to monitor a variety of system objects and events including file <em>descriptors, mach ports, processes, virtual filesystem nodes, signal delivery and timers</em>.</p>
+
+<p>When a state change occurs, the <a href="https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man3/dispatch_source_create.3.html">dispatch source</a> will be submit its event handler block to its target queue.</p>
+
+<h4>Dispatch::Source.new</h4>
+
+<h5>Methods in Dispatch::Source class:</h5>
+
+<p>All the <code>Dispatch::Source</code> types have the same initialization scheme:</p>
+
+<pre><code>- new(type, handle, mask, queue) { ... } -&gt; Source
+    - [PARAM] type:
+        - The type of the dispatch source.
+    - [PARAM] handle:
+        - The handle to monitor. If passeed `DATA_ADD` or `DATA_OR` 
+        in type, specify the `0` in this argument.
+    - [PARAM] mask:
+        - The mask of flags.
+    - [PARAM] queue:
+        - The dispatch queue to which the event handler block is submitted.
+    - [RETURN]
+        - Returns a Dispatch::Source instance.
+</code></pre>
+
+<p>Well there is no rule without exception, in this case the exception is <code>Dispatch::Source.timer</code></p>
+
+<pre><code>- timer(delay, interval, leeway, queue) { ... } -&gt; Source
+    - [PARAM] delay:
+        - The start time of the timer.
+    - [PARAM] interval:
+        - The second interval for the timer.
+    - [PARAM] leeway:
+        - The amount of time, in seconds, that the system can defer the timer.
+    - [PARAM] queue:
+        - The dispatch queue to which the event handler block is submitted.
+    - [RETURN]
+        - Returns a Dispatch::Source instance.
+</code></pre>
+
+<p>Just like <code>Dispatch::Queue</code>, <code>Dispatch::Source</code> also can be cancelled and tested if they are cancelled:</p>
+
+<pre><code>- cancel!
+    - Asynchronously cancels the dispatch source, preventing any 
+    further of invocation of its event passed block
+
+- cancelled? -&gt; bool
+    - [RETURN]
+        - Returns a `true` if cancelled, otherwise `false`.
+</code></pre>
+
+<p>Other implemented Methods are:</p>
+
+<pre><code>- handle
+    - [RETURN]
+        - Returns the underlying Ruby handle for the dispatch source.
+- mask
+    - [RETURN]
+        - Returns returns the set of flags that were specified at source 
+        creation time via the mask argument.
+- data
+    - [RETURN]
+        - Returns the currently pending data for the dispatch source.
+</code></pre>
+
+<h2>DISPATCH SOURCE TYPES</h2>
+
+<p><a href="https://developer.apple.com/library/mac/documentation/Performance/Reference/GCD_libdispatch_Ref/Reference/reference.html">Grand Central Dispatch (GCD)</a> comes with 11 different type of Dispatch::Sources and at the moment only 8 are accessible to [MacRury][macrury] and <a href="http://www.rubymotion.com">RubyMotion</a>.</p>
+
+<ul>
+<li><h5>IMPLEMENTED</h5>
+
+<ul>
+<li><code>Dispatch::Source::DATA_ADD</code></li>
+<li><code>Dispatch::Source::DATA_OR</code></li>
+<li><code>Dispatch::Source::Timer</code></li>
+<li><code>Dispatch::Source::PROC</code></li>
+<li><code>Dispatch::Source::READ</code></li>
+<li><code>Dispatch::Source::WRITE</code></li>
+<li><code>Dispatch::Source::SIGNAL</code></li>
+<li><code>Dispatch::Source::VNODE</code></li>
+</ul>
+</li>
+</ul>
+
+
+<hr />
+
+<ul>
+<li><h5>NOT IMPLEMENTED</h5>
+
+<ul>
+<li><code>Dispatch::Source::MACH_SEND</code></li>
+<li><code>Dispatch::Source::MACH_RECV</code></li>
+<li><code>Dispatch::Source::MEMORYPRESSURE</code></li>
+</ul>
+</li>
+</ul>
+
+
+<p><strong>1. Dispatch::Source::DATA_ADD and Dispatch::Source::DATA_OR</strong></p>
+
+<p>Both Sources allow applications to manually trigger the source&#8217;s event action vai a call of <code>Dispatch::Source#&lt;&lt;</code>. The Data will be merged to with the source&#8217;s pending data via an atomic add or logic OR depending on the source type. the operation will happen within the target queue.</p>
+
+<figure class='code'><figcaption><span>Dispatch::Source::DATA_ADD</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">progress</span> <span class="o">=</span> <span class="no">Progress</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'><span class="n">queue</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;source add example&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">source</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Source</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Source</span><span class="o">::</span><span class="no">DATA_ADD</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">queue</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">src</span><span class="o">|</span>
+</span><span class='line'>  <span class="n">progress</span><span class="o">.</span><span class="n">increment</span> <span class="n">src</span><span class="o">.</span><span class="n">data</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">concurrent</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">idx</span><span class="o">|</span> <span class="nb">sleep</span> <span class="mi">0</span><span class="o">.</span><span class="mi">1</span><span class="p">;</span> <span class="n">source</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span> <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><em>explanation:</em> the above example increment our <code>progress</code> object, eventhought the numbers are generated concurrently the <code>source</code> will make it synchrone, so that are no ThreadSafe <code>progress</code> doesn&#8217;t blows our intentions.</p>
+
+<p><strong>2. Dispatch::Source::Timer</strong></p>
+
+<figure class='code'><figcaption><span>Dispatch::Source::Timer</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">queue</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">new</span> <span class="s1">&#39;example.timer&#39;</span>
+</span><span class='line'><span class="n">timer</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Source</span><span class="o">.</span><span class="n">timer</span><span class="p">(</span><span class="mi">0</span><span class="o">.</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="o">.</span><span class="mi">5</span><span class="p">,</span> <span class="n">queue</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">s</span><span class="o">|</span>
+</span><span class='line'>  <span class="nb">puts</span> <span class="s2">&quot;Wake up!&quot;</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><em>explanation:</em> The Above source is a timer which get called every 1 second, but it has a leeway of 0.5 second, which means it may sometimes be called with a max interval of 1.5 seconds. The leeway is the torance.</p>
+
+<p><strong>3. Dispatch::Source::PROC</strong></p>
+
+<p>This type of sources monitpr procesdses state changes, the handle is the process identifier of the monitored process and te mask may be one or more of the following flags:</p>
+
+<table>
+<thead>
+<tr>
+<th>Flag                              </th>
+<th>     </th>
+<th> Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dispatch::Source::PROC_EXIT       </td>
+<td>     </td>
+<td> The process has exited and is available to wait</td>
+</tr>
+<tr>
+<td>Dispatch::Source::PROC_FORK       </td>
+<td>     </td>
+<td> The process has created one or more child processes.</td>
+</tr>
+<tr>
+<td>Dispatch::Source::PROC_EXEC       </td>
+<td>     </td>
+<td> The process has become another executable image.</td>
+</tr>
+<tr>
+<td>Dispatch::Source::PROC_SIGNAL     </td>
+<td>     </td>
+<td> A Unix signal was delivered to the process.</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>How to use it?</p>
+
+<figure class='code'><figcaption><span>Dispatch::Source::PROC</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># Monitoring the death of a process</span>
+</span><span class='line'><span class="n">queue</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Proc&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">itunes</span> <span class="o">=</span> <span class="no">NSRunningApplication</span><span class="o">.</span><span class="n">runningApplicationsWithBundleIdentifier</span> <span class="s1">&#39;com.apple.iTunes&#39;</span>
+</span><span class='line'><span class="k">return</span> <span class="k">if</span> <span class="n">itunes</span><span class="o">.</span><span class="n">empty?</span>
+</span><span class='line'><span class="n">pid</span> <span class="o">=</span> <span class="n">itunes</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">processIdentifier</span>
+</span><span class='line'><span class="n">opts</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Source</span><span class="o">::</span><span class="no">PROC_EXIT</span>
+</span><span class='line'> <span class="c1"># will observe safari, whenever it quits the action block will be called</span>
+</span><span class='line'><span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Source</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Source</span><span class="o">::</span><span class="no">PROC</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">opts</span><span class="p">,</span> <span class="n">queue</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">src</span><span class="o">|</span>
+</span><span class='line'>  <span class="no">NSLog</span><span class="p">(</span><span class="s2">&quot;%@, iTunes quit&quot;</span><span class="p">,</span> <span class="n">src</span><span class="o">.</span><span class="n">mask</span><span class="p">)</span> <span class="c1"># 2147483648, iTunes quit</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><em>explanation:</em> On our example, we observer a iTunes Process, the block is called whenever the application is quited.</p>
+
+<p><strong>4. Dispatch::Source::READ</strong></p>
+
+<figure class='code'><figcaption><span>Dispatch::Source::READ</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;PATH/file2read.txt&#39;</span>
+</span><span class='line'><span class="vi">@result</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+</span><span class='line'><span class="n">read_queue</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">new</span> <span class="s2">&quot;read source queue&quot;</span>
+</span><span class='line'><span class="vi">@src</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Source</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Source</span><span class="o">::</span><span class="no">READ</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">read_queue</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">src</span><span class="o">|</span>
+</span><span class='line'><span class="k">begin</span>
+</span><span class='line'>    <span class="vi">@result</span> <span class="o">&lt;&lt;</span> <span class="vi">@file</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="c1"># ideally should read_nonblock</span>
+</span><span class='line'> <span class="k">rescue</span> <span class="no">Exception</span> <span class="o">=&gt;</span> <span class="n">error</span>
+</span><span class='line'>    <span class="nb">puts</span> <span class="n">error</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><em>explanation:</em> The above Source read the content of our file <code>filename</code> asynchronously, the content of the file will be copy in our <code>@result</code> variable.</p>
+
+<p><strong>5. Dispatch::Source::WRITE</strong></p>
+
+<figure class='code'><figcaption><span>Dispatch::Source::WRITE</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;PATH/hello.txt&#39;</span>
+</span><span class='line'><span class="n">filename</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="ss">File</span><span class="p">:</span><span class="ss">:WRONLY</span><span class="o">|</span><span class="ss">File</span><span class="p">:</span><span class="ss">:CREAT</span><span class="o">|</span><span class="ss">File</span><span class="p">:</span><span class="ss">:TRUNC</span><span class="p">,</span> <span class="mo">0644</span><span class="p">)</span>
+</span><span class='line'><span class="vi">@msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="vg">$$</span><span class="si">}</span><span class="s2">: </span><span class="si">#{</span><span class="no">Time</span><span class="o">.</span><span class="n">now</span><span class="si">}</span><span class="s2"> queue%s&quot;</span>
+</span><span class='line'><span class="vi">@pos</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'><span class="n">writer</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Source</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Source</span><span class="o">::</span><span class="no">WRITE</span><span class="p">,</span> <span class="n">fd</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">queue</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">src</span><span class="o">|</span>
+</span><span class='line'>  <span class="n">file</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">handle</span>
+</span><span class='line'>  <span class="k">begin</span>
+</span><span class='line'>    <span class="n">npos</span> <span class="o">=</span> <span class="vi">@pos</span> <span class="o">+</span> <span class="n">src</span><span class="o">.</span><span class="n">data</span> <span class="o">-</span> <span class="mi">1</span>
+</span><span class='line'>    <span class="n">msg</span> <span class="o">=</span> <span class="vi">@msg</span> <span class="o">%</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">current</span>
+</span><span class='line'>    <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="n">msg</span><span class="o">[</span><span class="vi">@pos</span><span class="o">.</span><span class="n">.npos</span><span class="o">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># ideally should write_nonblock</span>
+</span><span class='line'>    <span class="vi">@pos</span> <span class="o">=</span> <span class="n">npos</span> <span class="o">+</span> <span class="mi">1</span>
+</span><span class='line'>  <span class="k">rescue</span> <span class="no">Exception</span> <span class="o">=&gt;</span> <span class="n">error</span>
+</span><span class='line'>    <span class="nb">puts</span> <span class="n">error</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><em>explanation:</em> The above Source writes the content of the variable <code>@msg</code> asynchronously to the file <code>filename</code>.</p>
+
+<p><strong>6. Dispatch::Source::VNODE</strong></p>
+
+<table>
+<thead>
+<tr>
+<th>Flag                              </th>
+<th>    </th>
+<th> Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dispatch::Source::VNODE_WRITE     </td>
+<td>    </td>
+<td> The process has exited and is available to wait</td>
+</tr>
+<tr>
+<td>Dispatch::Source::VNODE_DELETE    </td>
+<td>    </td>
+<td> The process has become another executable image.</td>
+</tr>
+<tr>
+<td>Dispatch::Source::VNODE_EXTEND    </td>
+<td>    </td>
+<td> The process has created one or more child processes.</td>
+</tr>
+<tr>
+<td>Dispatch::Source::VNODE_RENAME    </td>
+<td>    </td>
+<td> The process has become another executable image.</td>
+</tr>
+<tr>
+<td>Dispatch::Source::VNODE_ATTRIB    </td>
+<td>    </td>
+<td> The process has become another executable image.</td>
+</tr>
+<tr>
+<td>Dispatch::Source::VNODE_REVOKE    </td>
+<td>    </td>
+<td> The process has become another executable image.</td>
+</tr>
+<tr>
+<td>Dispatch::Source::VNODE_LINK      </td>
+<td>    </td>
+<td> The process has become another executable image.</td>
+</tr>
+</tbody>
+</table>
+
+
+<figure class='code'><figcaption><span>Dispatch::Source::VNODE</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">O_EVTONLY</span> <span class="o">=</span> <span class="mh">0x8000</span>
+</span><span class='line'><span class="n">queue</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">new</span> <span class="s1">&#39;example.vnode&#39;</span>
+</span><span class='line'><span class="n">type</span>  <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Source</span><span class="o">::</span><span class="no">VNODE</span>
+</span><span class='line'><span class="n">opts</span>  <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Source</span><span class="o">::</span><span class="no">VNODE_WRITE</span> <span class="o">|</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Source</span><span class="o">::</span><span class="no">VNODE_DELETE</span>
+</span><span class='line'><span class="n">dirPath</span> <span class="o">=</span> <span class="s1">&#39;/Desktion/dir&#39;</span>
+</span><span class='line'><span class="n">fd</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="no">O_EVTONLY</span><span class="p">)</span>
+</span><span class='line'><span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Source</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">type</span><span class="p">,</span> <span class="n">dirPath</span><span class="p">,</span> <span class="n">opts</span><span class="p">,</span> <span class="n">queue</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">src</span><span class="o">|</span>
+</span><span class='line'>  <span class="n">data</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">data</span>
+</span><span class='line'>  <span class="k">if</span> <span class="n">data</span> <span class="o">==</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Source</span><span class="o">::</span><span class="no">VNODE_WRITE</span>
+</span><span class='line'>    <span class="nb">puts</span> <span class="s2">&quot;changed directory data&quot;</span>
+</span><span class='line'>  <span class="k">elsif</span> <span class="n">data</span> <span class="o">==</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Source</span><span class="o">::</span><span class="no">VNODE_DELETE</span>
+</span><span class='line'>    <span class="nb">puts</span> <span class="s1">&#39;The directory has been deleted.&#39;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><em>explanation:</em> The above Source observes the directory <code>dirPath</code>, whenever the content of the directory changes (write or deleted), the source triggers it block.</p>
+
+<p>As you can see, GCD is a mighty tool and it dvantages is concurrency and Asynchronousity. Whenever you have to get critical tasks done, you should consider GCD.</p>
+
+<p>This is the last part of the GCD Series. The coming posts will cover other topics. I hope you enjoyed it.</p>
+
+<p> <h2 id="source">Sources:</h2></p>
+
+<ul>
+<li><p><a href="https://github.com/MacRuby/MacRuby/wiki/Dispatch::Source-Class">Macruby WIKI - Dispatch::Source Class</a></p></li>
+<li><p><a href="https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man3/dispatch_source_cancel.3.html">OS X Man Pages</a></p></li>
+</ul>
+
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-09-23T15:23:00+02:00" data-updated="true" itemprop="datePublished">Sep 23<span>rd</span>, 2012</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/gcd/'>GCD</a>, <a class='category' href='/blog/categories/grand-central-dispatch/'>Grand Central Dispatch</a>, <a class='category' href='/blog/categories/macruby/'>MacRuby</a>, <a class='category' href='/blog/categories/ruby/'>Ruby</a>, <a class='category' href='/blog/categories/rubymotion/'>Rubymotion</a>
+
+
+</div>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2012/09/23/macruby-slash-rubymotion-auto-layout-basics/" itemprop="url">MacRuby/Rubymotion Auto Layout Basics</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<p>Until now whenever we used wanted to layout views on Rubymotion or MacRuby we harcoded the size and position of the UI elements. To achieve a little of dynamic we used the old style auto resizing masking.
+With this article you&#8217;ll get basic knowledge about the Cocoa/CocoaTouch Auto Layout architecture. For more on this topic you&#8217;re strongly encouraged to check the sources<a href="#source">¹</a>.</p>
+
+<p>The Auto Layout system let use defining layout <strong>constraints</strong> for the user interface elements, these <strong>constraints</strong> represent relationship between user interface elemets such as &#8220;these views line up head to tail&#8221; or &#8220;this button should move with this split view subview&#8221;. When laying out the user interface, a constraint satisfaction system arranges the elements in a way that most closely meets the constraints. if you configure constraints that the system cannot be satisfy, an exception is thrown.</p>
+
+<h4>What are constraints?</h4>
+
+<p>Constraints are rules for layout elements in your user interface. For example the help you to specify the a text label should be centered on its superview and keep the same proportional to its superview even though the superview sizes changed. Let&#8217;s illustrate it by real life scenario:
+- Localization example (image)
+- Auto Rotation example (image)</p>
+
+<p>Constraints themselves are objects, actually instances of <a href="https://developer.apple.com/library/ios/documentation/AppKit/Reference/NSLayoutConstraint_Class/NSLayoutConstraint/NSLayoutConstraint.html#//apple_ref/occ/cl/NSLayoutConstraint">NSLayoutConstraint</a> that you can install on views objects (instance of UIView on iOS 6 or Instace of NSView on Mac OS X ≥ 10.7)
+Typically, you specify the constraints in Interface Builder, well but you and and me can do it better :-), we will create it programmatically by using an ASCII-art<a href="#ascii">²</a> inspired format string and by using a form that looks very much like an linear equations<a href="#equations">³</a>:</p>
+
+<h4>pseudocode:</h4>
+
+<ul>
+<li> <code id="ascii">H:|-[input_field]-[action_button]-|<br/></code><br />
+<img src="/images/posts/ascii.png"><br /></li>
+<li> <code id="linear">view1.attr1 &lt; relation > view2.attr2 * multiplier + constant</code><br /></li>
+</ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># view1.width == 0.5 * view2.width + 0</span>
+</span><span class='line'><span class="no">NSLayoutConstraint</span><span class="o">.</span><span class="n">constraintWithItem</span><span class="p">(</span><span class="n">view1</span><span class="p">,</span>
+</span><span class='line'>                            <span class="ss">attribute</span><span class="p">:</span> <span class="no">NSLayoutAttributeWidth</span><span class="p">,</span>
+</span><span class='line'>                            <span class="ss">relatedBy</span><span class="p">:</span> <span class="no">NSLayoutRelationEqual</span><span class="p">,</span>
+</span><span class='line'>                               <span class="ss">toItem</span><span class="p">:</span> <span class="n">view2</span><span class="p">,</span>
+</span><span class='line'>                            <span class="ss">attribute</span><span class="p">:</span> <span class="no">NSLayoutAttributeWidth</span><span class="p">,</span>
+</span><span class='line'>                           <span class="ss">multiplier</span><span class="p">:</span> <span class="mi">0</span><span class="o">.</span><span class="mi">5</span><span class="p">,</span>
+</span><span class='line'>                             <span class="ss">constant</span><span class="p">:</span> <span class="mi">0</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
+
+<h4>what we want to achieve:</h4>
+
+<p><img src="/images/posts/auto_layout_colored_portrait.png" width="200" height="300" title="iPhone layout #2" >
+<img src="/images/posts/auto_layout_colored_landscape.png" width="300" height="200" title="Phone layout #4" ><br /></p>
+
+<h4>Explanation:</h4>
+
+<p>We have a UIViewcontroller with 5 subviews:
+1. UILabel: (Title label) should be directed attached to the top of it superview
+2. UILabel: (subtitle label) should be direct attached to the bottom of the title label
+3. UITextField: (Symbol input field) the input field is placed 5pts from the bottom of the subtitle label
+4. UIButton: the (action button) is direct attached to the right size of the input text.
+5. UILabel: (disclaimer label), it&#8217;s bottom side is placed 5 pts above the bottom of the superview.
+we want that all this relationship remains, don&#8217;t matter how the superview ratio changes.</p>
+
+<h4>how does it looks like in code?</h4>
+
+<figure class='code'><figcaption><span>Discover if a number is prime</span><a href='https://github.com/seanlilmateus/MAStockPriceFetcher'>Source article</a></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># first of all we need an hash with our views and the name that we want to use tho refer them </span>
+</span><span class='line'><span class="n">views_dict</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="s2">&quot;title_label&quot;</span> <span class="o">=&gt;</span> <span class="vi">@title_label</span><span class="p">,</span>
+</span><span class='line'>  <span class="s2">&quot;subtitle_label&quot;</span> <span class="o">=&gt;</span> <span class="vi">@subtitle_label</span><span class="p">,</span>
+</span><span class='line'>  <span class="s2">&quot;button_action&quot;</span> <span class="o">=&gt;</span> <span class="vi">@button_action</span><span class="p">,</span>
+</span><span class='line'>  <span class="s2">&quot;text_field&quot;</span> <span class="o">=&gt;</span> <span class="vi">@text_field</span><span class="p">,</span>
+</span><span class='line'>  <span class="s2">&quot;info_label&quot;</span> <span class="o">=&gt;</span> <span class="vi">@info_label</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="c1"># we create two constraints: </span>
+</span><span class='line'><span class="c1"># First row with the title_label</span>
+</span><span class='line'><span class="n">constraints</span> <span class="o">=</span> <span class="no">NSLayoutConstraint</span><span class="o">.</span><span class="n">constraintsWithVisualFormat</span><span class="p">(</span><span class="s2">&quot;H:|-[title_label]-|&quot;</span><span class="p">,</span>
+</span><span class='line'>                                                    <span class="ss">options</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span><span class='line'>                                                    <span class="ss">metrics</span><span class="p">:</span> <span class="kp">nil</span><span class="p">,</span>
+</span><span class='line'>                                                      <span class="ss">views</span><span class="p">:</span> <span class="n">views_dict</span><span class="p">)</span>
+</span><span class='line'><span class="nb">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">addConstraints</span><span class="p">(</span><span class="n">constraints</span><span class="p">)</span>
+</span><span class='line'><span class="c1"># second row with the subtitle_label</span>
+</span><span class='line'><span class="nb">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">addConstraints</span><span class="p">(</span><span class="no">NSLayoutConstraint</span><span class="o">.</span><span class="n">constraintsWithVisualFormat</span><span class="p">(</span><span class="s2">&quot;H:|-[subtitle_label]-|&quot;</span><span class="p">,</span>
+</span><span class='line'>                                                                <span class="ss">options</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span><span class='line'>                                                                <span class="ss">metrics</span><span class="p">:</span> <span class="kp">nil</span><span class="p">,</span>
+</span><span class='line'>                                                                  <span class="ss">views</span><span class="p">:</span> <span class="n">views_dict</span><span class="p">))</span>
+</span><span class='line'><span class="c1"># third row with an infolabel centered</span>
+</span><span class='line'><span class="nb">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">addConstraints</span><span class="p">(</span><span class="no">NSLayoutConstraint</span><span class="o">.</span><span class="n">constraintsWithVisualFormat</span><span class="p">(</span><span class="s2">&quot;H:|-[info_label]-|&quot;</span><span class="p">,</span>
+</span><span class='line'>                                                              <span class="ss">options</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span><span class='line'>                                                              <span class="ss">metrics</span><span class="p">:</span> <span class="kp">nil</span><span class="p">,</span>
+</span><span class='line'>                                                              <span class="ss">views</span><span class="p">:</span> <span class="n">views_dict</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;width&quot;</span> <span class="o">=&gt;</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;height&quot;</span><span class="o">=&gt;</span> <span class="mi">80</span> <span class="p">}</span>
+</span><span class='line'><span class="nb">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">addConstraints</span><span class="p">(</span><span class="no">NSLayoutConstraint</span><span class="o">.</span><span class="n">constraintsWithVisualFormat</span><span class="p">(</span><span class="s2">&quot;V:[info_label(==height@1000)]-5-|&quot;</span><span class="p">,</span>
+</span><span class='line'>                                                                  <span class="ss">options</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="c1">#  </span>
+</span><span class='line'>                                                                  <span class="ss">metrics</span><span class="p">:</span> <span class="n">metrics</span><span class="p">,</span>
+</span><span class='line'>                                                                    <span class="ss">views</span><span class="p">:</span> <span class="n">views_dict</span><span class="p">))</span>
+</span><span class='line'><span class="c1"># @button_action.width == 0.5 * @text_field.width + 0</span>
+</span><span class='line'><span class="nb">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">addConstraint</span><span class="p">(</span><span class="no">NSLayoutConstraint</span><span class="o">.</span><span class="n">constraintWithItem</span><span class="p">(</span><span class="vi">@button_action</span><span class="p">,</span>
+</span><span class='line'>                                                    <span class="ss">attribute</span><span class="p">:</span> <span class="no">NSLayoutAttributeWidth</span><span class="p">,</span>
+</span><span class='line'>                                                    <span class="ss">relatedBy</span><span class="p">:</span> <span class="no">NSLayoutRelationEqual</span><span class="p">,</span>
+</span><span class='line'>                                                       <span class="ss">toItem</span><span class="p">:</span> <span class="vi">@text_field</span><span class="p">,</span>
+</span><span class='line'>                                                    <span class="ss">attribute</span><span class="p">:</span> <span class="no">NSLayoutAttributeWidth</span><span class="p">,</span>
+</span><span class='line'>                                                   <span class="ss">multiplier</span><span class="p">:</span> <span class="mi">0</span><span class="o">.</span><span class="mi">5</span><span class="p">,</span>
+</span><span class='line'>                                                     <span class="ss">constant</span><span class="p">:</span> <span class="mi">0</span><span class="p">))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Final result:</h2>
+
+<p><img src="/images/posts/auto_layout_original_portrait.png" width="200" height="300" title="iPhone layout #1" >
+<img src="/images/posts/auto_layout_original_landscape.png" width="300" height="200" title="iPhone layout #3" ><br /></p>
+
+<p>This code might work on all devices the same [iphone, retina iphone and iphone 5]
+the example code on <a href="https://github.com/seanlilmateus/MAStockPriceFetcher">github</a> include some localization tweaks, it shows what are the benifits of autolayout for localization and other stuffs.</p>
+
+<p> <h2 id="source">Sources:</h2>
+- <a href="https://developer.apple.com/videos/wwdc/2011/includes/cocoa-autolayout.html#cocoa-autolayout">Cocoa Autolayout WWDC 2011 video</a><br/>
+- <a href="http://developer.apple.com/library/mac/#documentation/UserExperience/Conceptual/AutolayoutPG/Articles/Introduction.html#//apple_ref/doc/uid/TP40010853-CH1-DontLinkElementID_2">Cocoa Auto Layout Guide</a><br/>
+- <a href="http://www.raywenderlich.com/20897/beginning-auto-layout-part-1-of-2">Beginning Auto Layout in iOS 6: Part 1 / 2</a><br/>
+- <a href="http://www.raywenderlich.com/20897/beginning-auto-layout-part-2-of-2">Beginning Auto Layout in iOS 6: Part 2 / 2</a><br/>
+- <a href="https://developer.apple.com/videos/wwdc/2012/?id=228">WWDC 2012: Best Practices for Mastering Auto Layout</a><br/></p>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-10T21:05:00+02:00" data-updated="true" itemprop="datePublished">Jun 10<span>th</span>, 2012</time></div>
+		<div class="tags">
+
+</div>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2012/06/10/gcd-for-everyone/" itemprop="url">GCD for Everyone</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<p>This is the third part of a serie of four blog articles on how to use Grand Central Dispatch with Macruby and rubymotion, today I want to Introduce you to tDispatch Semaphores.</p>
+
+<h2>Understanding and using Dispatch Semaphores</h2>
+
+<p>Dispatch semaphore is GCD’s implementations of traditional counting semaphore not to be confused whit Ruby’s Mutex which only implements a simple semaphore lock but also allows coordinated access to shared data from multiple Threads. Traditional semaphores always require calling down to the kernel to test the semaphore, but the dispatch semaphore tests semaphore in user space, and only traps into the kernel when the test fails and needs to block the thread, this makes Dispatch Semaphore efficient and lightweight.</p>
+
+<p>A Dispatch Semaphore object on mainly responds to two methods:</p>
+
+<pre><code>- semaphore#signal
+- semaphore#wait()
+</code></pre>
+
+<p>*-When a semaphore is signaled, the counter is incremented. When the thread waits in a semaphore, it will block, if necessary until is greater than 0 and then decrement the count.</p>
+
+<p>Let&#8217;s look into some code for better understanding:
+On This example I&#8217;ll try to solve the &#8221;<strong>The Dining Philosophers Problem</strong>&#8221; which is an example problem often used in concurrent algorithm design to illustrate synchronization issues and techniques for resolving them.</p>
+
+<h2>The Problem</h2>
+
+<p>The dining philosophers problem is invented by E. W. Dijkstra. Imagine that five philosophers who spend their lives just thinking and easting. In the middle of the dining room is a circular table with five chairs. The table has a big plate of spaghetti. However, there are only five chopsticks available, as shown in the following figure. Each philosopher thinks. When he gets hungry, he sits down and picks up the two chopsticks that are closest to him. If a philosopher can pick up both chopsticks, he eats for a while. when a philosopher finishes eating, he puts down the chopsticks and starts to think <a href="http://www.cs.mtu.edu/~shene/NSF-3/e-Book/SEMA/TM-example-philos-4chairs.html">more information</a>.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Philosopher</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="n">left_chopstick</span><span class="p">,</span> <span class="n">right_chopstick</span><span class="p">)</span>
+</span><span class='line'>    <span class="vi">@name</span> <span class="o">=</span> <span class="nb">name</span>
+</span><span class='line'>    <span class="vi">@left_chopstick</span> <span class="o">=</span> <span class="n">left_chopstick</span>
+</span><span class='line'>    <span class="vi">@right_chopstick</span> <span class="o">=</span> <span class="n">right_chopstick</span>
+</span><span class='line'>    <span class="vi">@meals</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">run</span>
+</span><span class='line'>    <span class="k">while</span> <span class="vi">@meals</span> <span class="o">&lt;</span> <span class="mi">5</span>
+</span><span class='line'>      <span class="n">think</span>
+</span><span class='line'>      <span class="n">dine</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>    <span class="nb">puts</span> <span class="s2">&quot;philosopher: </span><span class="si">#@name</span><span class="s2"> is full!&quot;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">think</span>
+</span><span class='line'>    <span class="nb">puts</span> <span class="s2">&quot;philosopher: </span><span class="si">#@name</span><span class="s2"> is thinking...&quot;</span>
+</span><span class='line'>    <span class="nb">sleep</span><span class="p">(</span><span class="nb">rand</span><span class="p">())</span>
+</span><span class='line'>    <span class="nb">puts</span> <span class="s2">&quot;philosopher: </span><span class="si">#@name</span><span class="s2"> is hungry...&quot;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">dine</span>
+</span><span class='line'>    <span class="n">chopstick1</span><span class="p">,</span> <span class="n">chopstick2</span> <span class="o">=</span> <span class="vi">@left_chopstick</span><span class="p">,</span> <span class="vi">@right_chopstick</span>
+</span><span class='line'>    <span class="k">while</span> <span class="kp">true</span>
+</span><span class='line'>      <span class="n">pickup</span><span class="p">(</span><span class="n">chopstick1</span><span class="p">,</span> <span class="ss">:wait</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">)</span>
+</span><span class='line'>      <span class="nb">puts</span> <span class="s2">&quot;philosopher: </span><span class="si">#@name</span><span class="s2"> has chopstick </span><span class="si">#{</span><span class="n">chopstick1</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">...&quot;</span>
+</span><span class='line'>      <span class="k">break</span> <span class="k">if</span> <span class="n">pickup</span><span class="p">(</span><span class="n">chopstick2</span><span class="p">,</span> <span class="ss">:wait</span> <span class="o">=&gt;</span> <span class="kp">false</span><span class="p">)</span>
+</span><span class='line'>      <span class="nb">puts</span> <span class="s2">&quot;philosopher: </span><span class="si">#@name</span><span class="s2"> cannot pickup second chopstick </span><span class="si">#{</span><span class="n">chopstick2</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">...&quot;</span>
+</span><span class='line'>      <span class="n">release</span><span class="p">(</span><span class="n">chopstick1</span><span class="p">)</span>
+</span><span class='line'>      <span class="n">chopstick1</span><span class="p">,</span> <span class="n">chopstick2</span> <span class="o">=</span> <span class="n">chopstick2</span><span class="p">,</span> <span class="n">chopstick1</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>    <span class="nb">puts</span> <span class="s2">&quot;philosopher: </span><span class="si">#@name</span><span class="s2"> has the second chopstick </span><span class="si">#{</span><span class="n">chopstick2</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">...&quot;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nb">puts</span> <span class="s2">&quot;philosopher: </span><span class="si">#@name</span><span class="s2"> eats...&quot;</span>
+</span><span class='line'>    <span class="nb">sleep</span><span class="p">(</span><span class="nb">rand</span><span class="p">())</span>
+</span><span class='line'>    <span class="nb">puts</span> <span class="s2">&quot;philosopher: </span><span class="si">#@name</span><span class="s2"> belches&quot;</span>
+</span><span class='line'>    <span class="vi">@meals</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">release</span><span class="p">(</span><span class="vi">@left_chopstick</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">release</span><span class="p">(</span><span class="vi">@right_chopstick</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">pickup</span><span class="p">(</span><span class="n">chopstick</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
+</span><span class='line'>    <span class="nb">puts</span> <span class="s2">&quot;philosopher: </span><span class="si">#@name</span><span class="s2"> attempts to pickup chopstick </span><span class="si">#{</span><span class="n">chopstick</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">...&quot;</span>
+</span><span class='line'>    <span class="n">chopstick</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">release</span><span class="p">(</span><span class="n">chopstick</span><span class="p">)</span>
+</span><span class='line'>    <span class="nb">puts</span> <span class="s2">&quot;philosopher: </span><span class="si">#@name</span><span class="s2"> releases chopstick </span><span class="si">#{</span><span class="n">chopstick</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">...&quot;</span>
+</span><span class='line'>    <span class="n">chopstick</span><span class="o">.</span><span class="n">release</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># we just wrappe the semaphores</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">Chopstick</span> <span class="o">&lt;</span> <span class="no">Struct</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:id</span><span class="p">,</span> <span class="ss">:semaphore</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">release</span>
+</span><span class='line'>    <span class="n">semaphore</span><span class="o">.</span><span class="n">signal</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">wait</span><span class="p">(</span><span class="n">opt</span><span class="o">=</span><span class="p">{})</span>
+</span><span class='line'>    <span class="n">semaphore</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">opt</span><span class="o">[</span><span class="ss">:wait</span><span class="o">]</span> <span class="p">?</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:TIME_FOREVER</span> <span class="p">:</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:TIME_NOW</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="n">philosophers</span> <span class="o">=</span> <span class="sx">%W{Aristotle Kant Spinoza Marx Russell}</span>
+</span><span class='line'><span class="n">size</span> <span class="o">=</span> <span class="n">philosophers</span><span class="o">.</span><span class="n">length</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">chopsticks</span> <span class="o">=</span> <span class="nb">Array</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">size</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="no">Chopstick</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Semaphore</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="p">}</span>
+</span><span class='line'><span class="n">queue</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">concurrent</span><span class="p">(</span><span class="s2">&quot;de.mateus.philosophers.problem&quot;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">group</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Group</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">philosophers</span><span class="o">.</span><span class="n">each_with_index</span> <span class="k">do</span> <span class="o">|</span><span class="nb">name</span><span class="p">,</span> <span class="n">idx</span><span class="o">|</span>
+</span><span class='line'>  <span class="n">queue</span><span class="o">.</span><span class="n">async</span><span class="p">(</span><span class="n">group</span><span class="p">)</span> <span class="k">do</span>
+</span><span class='line'>    <span class="n">cs1</span> <span class="o">=</span> <span class="n">chopsticks</span><span class="o">[</span><span class="n">idx</span><span class="o">]</span>
+</span><span class='line'>    <span class="n">cs2</span> <span class="o">=</span> <span class="n">chopsticks</span><span class="o">[</span><span class="p">(</span><span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">%</span><span class="n">size</span><span class="o">]</span>
+</span><span class='line'>    <span class="no">Philosopher</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="n">cs1</span><span class="p">,</span> <span class="n">cs2</span><span class="p">)</span><span class="o">.</span><span class="n">run</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># since we want to see the out put, he have to wait till all the dispatch tasks are done</span>
+</span><span class='line'><span class="n">group</span><span class="o">.</span><span class="n">wait</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>`</p>
+
+<p>On this example the Chopsticks are our Infinite resource each philosopher has one, but to eat he needs two, whenever a philosopher picks a chopsticks he send a wait, and when he is done the send a signal to wake the others waiting for the chopsticks.</p>
+
+<p>Let&#8217;s take a look into how semaphores really work:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># we create an semaphore with the number of resources available: 1</span>
+</span><span class='line'><span class="n">semaphore</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Semaphore</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># Increment the counting semaphore. If the previous value was less than zero, </span>
+</span><span class='line'><span class="c1"># this function wakes a thread currently waiting in semaphore#wait</span>
+</span><span class='line'><span class="n">semaphore</span><span class="o">.</span><span class="n">signal</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># Decrement the counting semaphore. If the resulting value is less than zero, </span>
+</span><span class='line'><span class="c1"># this function waits in FIFO order for a signal to occur before returning.</span>
+</span><span class='line'><span class="n">semaphore</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">time</span><span class="p">)</span> <span class="c1"># time can be Dispatch::TIME_FOREVER or Dispatch::TIME_NOW </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Another example sleeping barber problem</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1">#!/usr/bin/env macruby -wKU</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># A GCD-based implementation of the sleeping barber problem:</span>
+</span><span class='line'><span class="c1">#   http://en.wikipedia.org/wiki/Sleeping_barber_problem</span>
+</span><span class='line'><span class="c1">#   http://www.madebysofa.com/#blog/the_sleeping_barber</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="n">waiting_chairs</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;com.apple.waiting_chairs&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">semaphore</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Semaphore</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</span><span class='line'><span class="n">index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+</span><span class='line'><span class="k">while</span> <span class="kp">true</span>
+</span><span class='line'>  <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class='line'>  <span class="n">success</span> <span class="o">=</span> <span class="n">semaphore</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:TIME_NOW</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">if</span> <span class="n">success</span> <span class="o">!=</span> <span class="mi">0</span>
+</span><span class='line'>    <span class="nb">puts</span> <span class="s2">&quot;Customer turned away </span><span class="si">#{</span><span class="n">index</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span class='line'>    <span class="k">next</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="n">waiting_chairs</span><span class="o">.</span><span class="n">async</span> <span class="k">do</span>
+</span><span class='line'>    <span class="n">semaphore</span><span class="o">.</span><span class="n">signal</span>
+</span><span class='line'>    <span class="nb">puts</span> <span class="s2">&quot;Shave and a haircut </span><span class="si">#{</span><span class="n">index</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As you can see, Dispatch Semaphore is great way to control limited resource, this are basically the fundamental usage of dispatch semaphore. On the last blog post of this serie I’ll show the principles of Dispatch Source.</p>
+
+<h1>Coming next</h1>
+
+<h3>Dispatch Source</h3>
+
+<h2><em>Recommendation:</em></h2>
+
+<p> <em>- <a href="http://developer.apple.com/library/ios/#documentation/General/Conceptual/ConcurrencyProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40008091-CH1-SW1">Apple&#8217;s Concurrency Programming Guide</a></em><br/></p>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-03T22:12:00+02:00" data-updated="true" itemprop="datePublished">Jun 3<span>rd</span>, 2012</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/gcd/'>GCD</a>, <a class='category' href='/blog/categories/grand-central-dispatch/'>Grand Central Dispatch</a>, <a class='category' href='/blog/categories/macruby/'>MacRuby</a>, <a class='category' href='/blog/categories/ruby/'>Ruby</a>, <a class='category' href='/blog/categories/rubymotion/'>Rubymotion</a>
+
+
+</div>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2012/06/03/dancing-with-gcd-group-and-barriers/" itemprop="url">Dancing With GCD Group and Barriers</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<p>Today we will dinner with GCD Group and barriers features. This article assumes you have already read my previous article <a href="/blog/2012/05/31/getting-started-with-grand-central-dispatch-in-macruby-and-rubymotion/">Getting Started With GCD in MacRuby &amp; Rubymotion</a>.</p>
+
+<p>Now that we know how to use Grand Central Dispatch to make our application concurrent and parallel, this time I&#8217;ll try to show you how GCD makes it easier for us to syncronize blocks and queue tasks.</p>
+
+<p>A dispatch group is a way to monitor a set of block objects for completion. (You can monitor the blocks synchronously or asynchronously depending on your needs.) Groups provide a useful synchronization mechanism for code that depends on the completion of other tasks. Dispatch::Group acts more or less like Thread#join in plain ruby.</p>
+
+<p>Let&#8217;s look at some examples to figure out how how Dispatch::Group works:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">group</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Group</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'><span class="n">derpina_queue</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">concurrent</span><span class="p">(</span><span class="ss">:high</span><span class="p">)</span>   <span class="c1">#Dispatch::Queue.concurrent(&quot;com.company.movie_night.get_wine&quot;)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">derp_queue</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">concurrent</span><span class="p">(</span><span class="ss">:default</span><span class="p">)</span>   <span class="c1">#Dispatch::Queue.concurrent(&quot;com.company.movie_night.get_popcorn&quot;)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">derpina_queue</span><span class="o">.</span><span class="n">async</span><span class="p">(</span><span class="n">group</span><span class="p">)</span> <span class="k">do</span>
+</span><span class='line'>  <span class="nb">puts</span> <span class="s2">&quot;go to wine cellar to get some Bordeaux&quot;</span>
+</span><span class='line'>  <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>  <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">99</span>
+</span><span class='line'>    <span class="nb">puts</span> <span class="s2">&quot;can&#39;t decide which one to drink&quot;</span>
+</span><span class='line'>    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="n">group</span><span class="o">.</span><span class="n">notify</span><span class="p">(</span><span class="n">derpina_queue</span><span class="p">)</span> <span class="p">{</span> <span class="nb">warn</span> <span class="s2">&quot;Derpina is back :-)&quot;</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">derp_queue</span><span class="o">.</span><span class="n">async</span><span class="p">(</span><span class="n">group</span><span class="p">)</span> <span class="k">do</span>
+</span><span class='line'>  <span class="nb">puts</span> <span class="s2">&quot;go to the kitchen pick some popcorn&quot;</span>
+</span><span class='line'>  <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>  <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">9999</span>
+</span><span class='line'>    <span class="nb">puts</span> <span class="s2">&quot;damn, I have to make new one&quot;</span>
+</span><span class='line'>    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="n">group</span><span class="o">.</span><span class="n">notify</span><span class="p">(</span><span class="n">derp_queue</span><span class="p">)</span> <span class="p">{</span> <span class="nb">warn</span> <span class="s2">&quot;Derp is back :-)&quot;</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">group</span><span class="o">.</span><span class="n">wait</span>
+</span><span class='line'><span class="nb">puts</span> <span class="s2">&quot;both are back, let&#39;s watch the movie&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">movie</span><span class="o">.</span><span class="n">play</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>On this example, Derpina will wait till Derp is back from the kitchen to press the play button. You don&#8217;t have to use two queues, both tasks could be executed on the same queue.</p>
+
+<p>How useful are groups on GCD? well let&#8217;s take a look into another example, do you know how difficult is to implement <a href="http://en.wikipedia.org/wiki/Futures_and_promises">Promises and Futures</a> in plain Ruby? well this is how you can implement in MacRuby or Rubymotion:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="kp">include</span> <span class="no">Dispatch</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">Future</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+</span><span class='line'>    <span class="c1"># Each thread gets its own FIFO queue upon which we will dispatch</span>
+</span><span class='line'>    <span class="c1"># the delayed computation passed in the &amp;block variable.</span>
+</span><span class='line'>    <span class="no">Thread</span><span class="o">.</span><span class="n">current</span><span class="o">[</span><span class="ss">:futures</span><span class="o">]</span> <span class="o">||=</span> <span class="no">Queue</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;org.macruby.futures-</span><span class="si">#{</span><span class="no">Thread</span><span class="o">.</span><span class="n">current</span><span class="o">.</span><span class="n">object_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span class='line'>    <span class="vi">@group</span> <span class="o">=</span> <span class="no">Group</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'>    <span class="c1"># Asynchronously dispatch the future to the thread-local queue.</span>
+</span><span class='line'>    <span class="no">Thread</span><span class="o">.</span><span class="n">current</span><span class="o">[</span><span class="ss">:futures</span><span class="o">].</span><span class="n">async</span><span class="p">(</span><span class="vi">@group</span><span class="p">)</span> <span class="p">{</span> <span class="vi">@value</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">call</span> <span class="p">}</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">value</span>
+</span><span class='line'>    <span class="c1"># Wait for the computation to finish. If it has already finished, then</span>
+</span><span class='line'>    <span class="c1"># just return the value in question.</span>
+</span><span class='line'>    <span class="vi">@group</span><span class="o">.</span><span class="n">wait</span>
+</span><span class='line'>    <span class="vi">@value</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now it’s easy to schedule long-running tasks in the background:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">some_result</span> <span class="o">=</span> <span class="no">Future</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span>
+</span><span class='line'>  <span class="nb">p</span> <span class="s1">&#39;Engaging delayed computation!&#39;</span>
+</span><span class='line'>  <span class="nb">sleep</span> <span class="mi">2</span><span class="o">.</span><span class="mi">5</span>
+</span><span class='line'>  <span class="ss">:done</span> <span class="c1"># Your result would go here.</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">p</span> <span class="n">some_result</span><span class="o">.</span><span class="n">value</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p> <em>this example is brought to you by <a href="https://github.com/patrickt">patrickt (Patrick Thomson)</a> and <a href="https://github.com/benstiglitz">benstiglitz (Benjamin Stiglitz)</a></em></p>
+
+<h3>Barriers</h3>
+
+<p>I think we have enough of groups, now let&#8217;s take a look into something new, barrier were introduced with OS X Lion and iOS 5. Barriers are a specialized version of the Dispatch::Queue#async method. <strong>When a block enqueued with barrier_async reaches the front of a private concurrent queue, it waits until all other enqueued blocks to finish executing, at which point the block is executed. No blocks submitted after a call to barrier_async will be executed until the enqueued block finishes. It returns immediately</strong> (from Macruby Source code)
+If the provided queue is not a concurrent private queue, this function behaves identically to the #async function.</p>
+
+<p>let&#8217;s look into some code:</p>
+
+<figure class='code'><figcaption><span>Dispatch::Queue#barrier_async</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">queue</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">concurrent</span><span class="p">(</span><span class="s1">&#39;com.company.application.task&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="vi">@i</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+</span><span class='line'><span class="n">queue</span><span class="o">.</span><span class="n">async</span> <span class="p">{</span> <span class="vi">@i</span> <span class="o">+=</span> <span class="s1">&#39;a&#39;</span> <span class="p">}</span>
+</span><span class='line'><span class="n">queue</span><span class="o">.</span><span class="n">async</span> <span class="p">{</span> <span class="vi">@i</span> <span class="o">+=</span> <span class="s1">&#39;b&#39;</span> <span class="p">}</span>
+</span><span class='line'><span class="n">queue</span><span class="o">.</span><span class="n">barrier_async</span> <span class="p">{</span> <span class="vi">@i</span> <span class="o">+=</span> <span class="s1">&#39;c&#39;</span> <span class="p">}</span>
+</span><span class='line'><span class="nb">p</span> <span class="vi">@i</span> <span class="c1">#=&gt; either prints out &#39;abc&#39; or &#39;bac&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>
+When should we use #barrier_async ? Well barrier_async are pretty useful for example to manipulate data structures which can be read but not written concurrently.</p>
+
+<p>There is a second barrier method, which blocks until the provided task or block is executed.
+e.g.:</p>
+
+<figure class='code'><figcaption><span>Dispatch::Queue#barrier_sync</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">queue</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">concurrent</span><span class="p">(</span><span class="s1">&#39;com.company.application.task&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="vi">@i</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+</span><span class='line'><span class="n">queue</span><span class="o">.</span><span class="n">async</span> <span class="p">{</span> <span class="vi">@i</span> <span class="o">+=</span> <span class="s1">&#39;a&#39;</span> <span class="p">}</span>
+</span><span class='line'><span class="n">queue</span><span class="o">.</span><span class="n">async</span> <span class="p">{</span> <span class="vi">@i</span> <span class="o">+=</span> <span class="s1">&#39;b&#39;</span> <span class="p">}</span>
+</span><span class='line'><span class="n">queue</span><span class="o">.</span><span class="n">barrier_sync</span> <span class="p">{</span> <span class="vi">@i</span> <span class="o">+=</span> <span class="s1">&#39;c&#39;</span> <span class="p">}</span> <span class="c1"># blocks</span>
+</span><span class='line'><span class="nb">p</span> <span class="vi">@i</span> <span class="c1">#=&gt; either prints out &#39;abc&#39; or &#39;bac&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>more barrier example</strong> inspired by <a href="http://www.mikeash.com/pyblog/friday-qa-2011-10-14-whats-new-in-gcd.html">Mike Ash</a>
+Let&#8217;s imagine that we have a Hash that&#8217;s being used as a cache. Hash is thread safe for reading, but doesn&#8217;t allow any concurrent access while modifying its contents, not even if the other access is simple reading.&#8221;</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">framework</span> <span class="s1">&#39;Foundation&#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">Cache</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">initialize</span>
+</span><span class='line'>    <span class="vi">@cache</span> <span class="o">=</span> <span class="no">Hash</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'>    <span class="vi">@queue</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">concurrent</span><span class="p">(</span><span class="s1">&#39;com.company.application.cache&#39;</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">[]=</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</span><span class='line'>    <span class="vi">@queue</span><span class="o">.</span><span class="n">barrier_async</span><span class="p">{</span> <span class="vi">@cache</span><span class="o">[</span><span class="n">key</span><span class="o">]</span> <span class="o">=</span> <span class="n">value</span> <span class="p">}</span>  <span class="c1"># GCD Version</span>
+</span><span class='line'>    <span class="c1">#@cache[key] = value                         # Ruby Version</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">[]</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+</span><span class='line'>    <span class="vi">@queue</span><span class="o">.</span><span class="n">sync</span> <span class="p">{</span> <span class="k">return</span> <span class="vi">@cache</span><span class="o">[</span><span class="n">key</span><span class="o">]</span> <span class="p">}</span>         <span class="c1"># GCD Version</span>
+</span><span class='line'>    <span class="c1">#@cache[key]                                 # Ruby Version</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">inspect</span>
+</span><span class='line'>    <span class="vi">@cache</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">cache</span> <span class="o">=</span> <span class="no">Cache</span><span class="o">.</span><span class="n">new</span>
+</span><span class='line'><span class="n">list</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;/usr/share/dict/words&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="o">.</span><span class="n">select</span><span class="p">{</span> <span class="o">|</span><span class="n">word</span><span class="o">|</span> <span class="n">word</span><span class="o">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="o">].</span><span class="n">downcase</span> <span class="o">==</span> <span class="s2">&quot;a&quot;</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># cocoa&#39;s concurrent enumeration of NSArray</span>
+</span><span class='line'><span class="n">list</span><span class="o">.</span><span class="n">enumerateObjectsWithOptions</span><span class="p">(</span><span class="no">NSEnumerationConcurrent</span><span class="p">,</span> <span class="ss">usingBlock</span><span class="p">:</span><span class="o">-&gt;</span> <span class="n">word</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">stop</span> <span class="p">{</span>
+</span><span class='line'>  <span class="n">cache</span><span class="o">[</span><span class="n">idx</span><span class="o">.</span><span class="n">to_s</span><span class="o">]</span> <span class="o">=</span> <span class="n">word</span>
+</span><span class='line'>  <span class="nb">p</span> <span class="n">cache</span><span class="o">[</span><span class="n">idx</span><span class="o">.</span><span class="n">to_s</span><span class="o">]</span>
+</span><span class='line'><span class="p">})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To have a better understanding, you should try both versions out (GCD and Ruby Version) one of them will hang, unfortunately the actual MacRuby version is not compiled on Mac OS X Lion, so Dispatch::Queue#barrier_async is not availible, but you can compile it yourself&#8230; or ask me on twitter, if I can send you an installer package ;-)</p>
+
+<h3>Final</h3>
+
+<p>Since one of biggest difference between Android and iOS application is the UI responsiveness, I hope this motivates you to use GCD to improving the user experience of your rubymotion application.</p>
+
+<h1>Coming next</h1>
+
+<h3>Dispatch Semaphore</h3>
+
+<h3>Dispatch Source</h3>
+
+<h2><em>Recommendation:</em></h2>
+
+<p> <em>- <a href="http://developer.apple.com/library/ios/#documentation/General/Conceptual/ConcurrencyProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40008091-CH1-SW1">Apple&#8217;s Concurrency Programming Guide</a></em><br/></p>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-31T18:03:00+02:00" data-updated="true" itemprop="datePublished">May 31<span>st</span>, 2012</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/gcd/'>GCD</a>, <a class='category' href='/blog/categories/grand-central-dispatch/'>Grand Central Dispatch</a>, <a class='category' href='/blog/categories/macruby/'>MacRuby</a>, <a class='category' href='/blog/categories/ruby/'>Ruby</a>, <a class='category' href='/blog/categories/rubymotion/'>Rubymotion</a>
+
+
+</div>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2012/05/31/getting-started-with-grand-central-dispatch-in-macruby-and-rubymotion/" itemprop="url">Getting Started With GCD in MacRuby &amp; Rubymotion</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<h1>Grand Central Dispatch</h1>
+
+<p>Grand Central Dispatch is the apple way to perform concurrent programming, by using it you&#8217;re able to divide your program into peaces <em>tasks</em> that can be executed by a queue concurrently or serially. Since GCD is a low level C API, you can&#8217;t communicate directly with it, but MacRuby has a wrapper for that.</p>
+
+<h3>What are Queues?</h3>
+
+<p>You can think of <em><strong>Dispatch::Queue</strong>s</em> as workers waiting to execute undefined tasks, the can either execute tasks concurrently or serially.
+A Serial Queue executes a single task at once, a concurrent queue is capable to execute as many tasks simultaneously as your system allow it execute.</p>
+
+<h2>Creating and Managing Queues:</h2>
+
+<p>GCD comes with three different types of queues:<br />
+1) <em><strong>The Main queue:</strong></em> the main queue is the application aka. main thread, you can get this queue by using:</p>
+
+<figure class='code'><figcaption><span>get the man queue</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">main_queue</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">main</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>2) <em><strong>Global / Concurrents queue:</strong></em> on pre Lion / iOS5 version of GCD there were only one concurrent queue that could have three defined priorities, but now this changed. You can create as much concurrent queues as you want that execute multiple blocks at the same time<a href="#one">¹</a>.</p>
+
+<figure class='code'><figcaption><span>Get / Create Concurrent queues</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># get the global concurrent queue on 10.6 OSX [priority can be :high, :low or :default]</span>
+</span><span class='line'><span class="n">queue</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">concurrent</span><span class="p">(</span><span class="n">priority</span><span class="o">=</span><span class="ss">:default</span><span class="p">)</span>
+</span><span class='line'><span class="c1"># On Lion or iOS5 </span>
+</span><span class='line'><span class="n">queue</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">concurrent</span><span class="p">(</span><span class="s2">&quot;com.company.application.tasks&quot;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>3) <em><strong>Customized queues:</strong></em> are lightweight list of blocks which can be executed one at a time in FIFO order, they can be compared with Ruby mutex or traditional ruby thread. They are perfectly suited for synchronization mechanism without have to deal with <strong>lock</strong> and <strong>unlock</strong>.<a href="#two">²</a>
+If you want to ensure that tasks execute in a predictable order, you should use the customized queues.</p>
+
+<figure class='code'><figcaption><span>Create a custom Queue</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">queue</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;com.company.application.task&quot;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
+
+<h2>Submitting blocks to queues:</h2>
+
+<p>There are two ways to submit a block to a queue, the first is the asynchronous execution, which submits a block to a queue and returns immediately. e.g:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">queue</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">concurrent</span><span class="p">(</span><span class="s1">&#39;com.company.app.task&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">queue</span><span class="o">.</span><span class="n">async</span> <span class="p">{</span> <span class="nb">puts</span> <span class="ss">:hallo</span> <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The second method is the <strong>Dispatch::Queue#sync</strong> which submits a block to a dispatch queue and waits until it completion. Unlike the <strong>Dispatch::Queue#async</strong> method, the block are synchronously executed. e.g:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">queue</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">concurrent</span><span class="p">(</span><span class="s1">&#39;com.company.app.task&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">queue</span><span class="o">.</span><span class="n">sync</span> <span class="p">{</span> <span class="nb">puts</span> <span class="ss">:hallo</span> <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Submitting blocks later:</h4>
+
+<p><strong>Dispatch::Queue#after</strong> submits a block asynchronously to the given queue after, but the block will not be executed until the given delay (in seconds) has past.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">queue</span><span class="o">.</span><span class="n">after</span><span class="p">(</span><span class="mi">0</span><span class="o">.</span><span class="mi">5</span><span class="p">)</span> <span class="p">{</span> <span class="nb">puts</span> <span class="s1">&#39;waiting for the world to change&#39;</span> <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Concurrently executing one block many times</h4>
+
+<p><strong>Dispatch::Queue#apply</strong> submits a block to a dispatch queue for multiple execution, if the execution queue is a concurrent, the block will be executed concurrently.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">queue</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">concurrent</span><span class="p">(</span><span class="s1">&#39;com.company.app.task&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="vi">@result</span> <span class="o">=</span> <span class="o">[]</span>
+</span><span class='line'><span class="n">queue</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="p">{</span><span class="o">|</span><span class="n">idx</span><span class="o">|</span> <span class="vi">@result</span><span class="o">[</span><span class="n">idx</span><span class="o">]</span> <span class="o">=</span> <span class="n">idx</span><span class="o">*</span><span class="n">idx</span> <span class="p">}</span>
+</span><span class='line'><span class="nb">p</span> <span class="vi">@result</span>  <span class="c1">#=&gt; [0, 1, 4, 9, 16]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Managing Dispatch Objects</h3>
+
+<p>Dispatch Objects allow to manage the blocks execution by canceling, suspend and resume it.</p>
+
+<h4>Suspending and resuming execution:</h4>
+
+<figure class='code'><figcaption><span>suspending and resuming execution</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">queue</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;com.company.app.task&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">queue</span><span class="o">.</span><span class="n">async</span> <span class="p">{</span> <span class="nb">sleep</span> <span class="mi">1</span><span class="p">;</span> <span class="nb">puts</span> <span class="ss">:hallo</span> <span class="p">}</span>
+</span><span class='line'><span class="n">queue</span><span class="o">.</span><span class="n">suspend!</span>
+</span><span class='line'><span class="n">queue</span><span class="o">.</span><span class="n">suspended?</span>
+</span><span class='line'><span class="n">queue</span><span class="o">.</span><span class="n">resume!</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Getting the internal Queue Object:</h4>
+
+<p>Sometimes when dealing with Cocoa / CocoaTouch API&#8217;s you will need to have access to the Queue object, for this purpose Macruby&#8217;s GDC-Wrapper delievers a method to get the queue object: <em><strong>Dispatch::Queue#dispatch_object</strong></em></p>
+
+<h3>Dispatch Constants</h3>
+
+<p><em><strong>Dispatch::TIME_FOREVER</strong></em>: means infinity, queue or semaphore will wait till blocks are done <br />
+<em><strong> Dispatch::TIME_NOW</strong></em>: means zero, queue or semaphore will not wait for blocks at all<br /></p>
+
+<h1>Coming next</h1>
+
+<h3>Dispatch Barrier</h3>
+
+<h3>Dispatch Group</h3>
+
+<h3>Dispatch Semaphore</h3>
+
+<h3>Dispatch Source</h3>
+
+<h2><em>Recommendation:</em></h2>
+
+<p> <em>- <a href="http://macruby.macosforge.org/documentation/gcd.html">An Introduction to GCD with MacRuby by Patrick Thomson</a></em><br/>
+ <em>-<a href="http://www.mikeash.com/pyblog/friday-qa-2009-08-28-intro-to-grand-central-dispatch-part-i-basics-and-dispatch-queues.html">Intro to Grand Central Dispatch, Part I: Basics and Dispatch Queues by Mike Ash</a></em></p>
+
+<p> <div class="post-it">
+ <em id="one">¹ Concurrently executed blocks may complete out of order</em><br/>
+ <em id="two">² the queue names/labels are meant to help you debugging your application, and it should follow the reverse-DNS style convention</em>
+ </div></p>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-29T19:31:00+02:00" data-updated="true" itemprop="datePublished">Apr 29<span>th</span>, 2012</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/macruby/'>MacRuby</a>, <a class='category' href='/blog/categories/github/'>github</a>, <a class='category' href='/blog/categories/octopress/'>octopress</a>
+
+
+</div>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2012/04/29/welcome-post/" itemprop="url">Welcome Post</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<p>Welcome to my Mateus&#8217; Welt, from now on I&#8217;ll post article and some MacRuby tricks.
+If you&#8217;re interested on writing a guest post for this Blog, you&#8217;re welcome!</p>
+
+		
+		
+	</div>
+
+</article>
+
+</div>
+<nav id="pagenavi">
+    
+    
+    <div class="center"><a href="/blog/archives">Blog Archives</a></div>
+</nav></div>
+			</div>
+			<footer id="footer" class="inner"><p>
+  Copyright &copy; 2014 - Mateus Armando -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+			
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+		</div>
+	</div>
+</body>
+</html>

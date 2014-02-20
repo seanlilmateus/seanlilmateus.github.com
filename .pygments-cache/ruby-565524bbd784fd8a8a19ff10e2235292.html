@@ -1,0 +1,5 @@
+<div class="highlight"><pre><span class="c1"># get the global concurrent queue on 10.6 OSX [priority can be :high, :low or :default]</span>
+<span class="n">queue</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">concurrent</span><span class="p">(</span><span class="n">priority</span><span class="o">=</span><span class="ss">:default</span><span class="p">)</span>
+<span class="c1"># On Lion or iOS5 </span>
+<span class="n">queue</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">concurrent</span><span class="p">(</span><span class="s2">&quot;com.company.application.tasks&quot;</span><span class="p">)</span>
+</pre></div>

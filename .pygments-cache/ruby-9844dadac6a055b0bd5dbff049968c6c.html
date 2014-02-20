@@ -1,0 +1,5 @@
+<div class="highlight"><pre><span class="n">queue</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">concurrent</span><span class="p">(</span><span class="s1">&#39;com.company.app.task&#39;</span><span class="p">)</span>
+<span class="vi">@result</span> <span class="o">=</span> <span class="o">[]</span>
+<span class="n">queue</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="p">{</span><span class="o">|</span><span class="n">idx</span><span class="o">|</span> <span class="vi">@result</span><span class="o">[</span><span class="n">idx</span><span class="o">]</span> <span class="o">=</span> <span class="n">idx</span><span class="o">*</span><span class="n">idx</span> <span class="p">}</span>
+<span class="nb">p</span> <span class="vi">@result</span>  <span class="c1">#=&gt; [0, 1, 4, 9, 16]</span>
+</pre></div>

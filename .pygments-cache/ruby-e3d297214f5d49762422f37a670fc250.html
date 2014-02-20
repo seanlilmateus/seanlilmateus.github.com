@@ -1,0 +1,7 @@
+<div class="highlight"><pre><span class="n">queue</span> <span class="o">=</span> <span class="ss">Dispatch</span><span class="p">:</span><span class="ss">:Queue</span><span class="o">.</span><span class="n">concurrent</span><span class="p">(</span><span class="s1">&#39;com.company.application.task&#39;</span><span class="p">)</span>
+<span class="vi">@i</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="n">queue</span><span class="o">.</span><span class="n">async</span> <span class="p">{</span> <span class="vi">@i</span> <span class="o">+=</span> <span class="s1">&#39;a&#39;</span> <span class="p">}</span>
+<span class="n">queue</span><span class="o">.</span><span class="n">async</span> <span class="p">{</span> <span class="vi">@i</span> <span class="o">+=</span> <span class="s1">&#39;b&#39;</span> <span class="p">}</span>
+<span class="n">queue</span><span class="o">.</span><span class="n">barrier_sync</span> <span class="p">{</span> <span class="vi">@i</span> <span class="o">+=</span> <span class="s1">&#39;c&#39;</span> <span class="p">}</span> <span class="c1"># blocks</span>
+<span class="nb">p</span> <span class="vi">@i</span> <span class="c1">#=&gt; either prints out &#39;abc&#39; or &#39;bac&#39;</span>
+</pre></div>
